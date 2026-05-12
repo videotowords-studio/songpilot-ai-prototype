@@ -3,27 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SongPilot AI Prototype</title>
+  <title>SongPilot AI Song & Video Generator</title>
   <style>
     :root {
-      --bg: #f5f7f8;
-      --surface: #ffffff;
-      --surface-2: #eef3f1;
-      --ink: #17211f;
-      --muted: #697672;
-      --line: #dce4e1;
-      --teal: #0f766e;
-      --teal-2: #d9f0ec;
-      --coral: #d85f45;
-      --amber: #c58b21;
-      --mint: #64b59a;
-      --charcoal: #17211f;
-      --shadow: 0 18px 50px rgba(23, 33, 31, 0.09);
-      --radius: 8px;
-      --sidebar: 232px;
-      --rightbar: 332px;
+      --bg: #050507;
+      --bg-2: #090b12;
+      --sidebar: #030405;
+      --panel: #111827;
+      --panel-2: #151d2d;
+      --panel-3: #1c2637;
+      --line: rgba(139, 161, 196, 0.18);
+      --line-strong: rgba(91, 151, 255, 0.72);
+      --text: #f7f5ff;
+      --muted: #a2a9b7;
+      --soft: #778195;
+      --pink: #ff43a8;
+      --violet: #a855f7;
+      --purple: #7c3aed;
+      --blue: #5ba0ff;
+      --amber: #f6c247;
+      --green: #49d49d;
+      --danger: #ff6b8a;
+      --shadow: 0 26px 80px rgba(0, 0, 0, 0.55);
+      --glow: 0 0 26px rgba(181, 79, 255, 0.35);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
-      color: var(--ink);
+      color: var(--text);
       background: var(--bg);
       letter-spacing: 0;
     }
@@ -35,12 +39,41 @@
     body {
       margin: 0;
       min-height: 100vh;
+      overflow-x: hidden;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.86) 0%, rgba(245,247,248,0.96) 260px),
-        var(--bg);
+        radial-gradient(circle at 52% 6%, rgba(193, 72, 255, 0.18), transparent 28rem),
+        radial-gradient(circle at 72% 20%, rgba(255, 67, 168, 0.12), transparent 24rem),
+        linear-gradient(180deg, #050506 0%, #090912 50%, #050507 100%);
     }
 
-    button, input, select, textarea {
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+      opacity: 0.42;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(5,5,7,0.08), rgba(5,5,7,0.92) 86%),
+        linear-gradient(90deg, rgba(5,5,7,0.74) 0 250px, transparent 250px);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
       font: inherit;
     }
 
@@ -49,9 +82,15 @@
       cursor: pointer;
     }
 
-    .app {
+    textarea,
+    input {
+      color: var(--text);
+      background: transparent;
+    }
+
+    .shell {
       display: grid;
-      grid-template-columns: var(--sidebar) minmax(0, 1fr);
+      grid-template-columns: 256px minmax(0, 1fr);
       min-height: 100vh;
     }
 
@@ -59,172 +98,986 @@
       position: sticky;
       top: 0;
       height: 100vh;
-      background: var(--charcoal);
-      color: #eff6f4;
-      padding: 20px 16px;
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.92);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 16px;
+      z-index: 20;
     }
 
     .brand {
+      height: 50px;
       display: flex;
       align-items: center;
       gap: 10px;
-      min-height: 40px;
+      padding: 0 2px;
     }
 
-    .mark {
-      width: 36px;
-      height: 36px;
+    .logo {
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
-      background: conic-gradient(from 90deg, #64b59a, #f2b84b, #d85f45, #64b59a);
       display: grid;
       place-items: center;
-      color: #17211f;
+      background: linear-gradient(135deg, #8b5cf6 0%, #ff43a8 100%);
+      box-shadow: 0 0 22px rgba(255, 67, 168, 0.38);
       font-weight: 900;
+      color: #fff;
     }
 
-    .brand strong {
-      display: block;
-      font-size: 16px;
-      line-height: 1.1;
+    .brand b {
+      font-size: 18px;
+      line-height: 1;
     }
 
-    .brand span {
-      display: block;
-      color: #a9b8b4;
-      font-size: 12px;
-      margin-top: 2px;
-    }
-
-    .nav {
+    .collapse-dot {
+      margin-left: auto;
+      width: 28px;
+      height: 28px;
       display: grid;
-      gap: 6px;
+      place-items: center;
+      color: #9aa3b5;
+      background: transparent;
+      border-radius: 8px;
     }
 
-    .nav button {
-      height: 42px;
+    .nav-section {
+      display: grid;
+      gap: 7px;
+    }
+
+    .nav-title {
+      padding: 8px 16px 4px;
+      color: #74829b;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      min-height: 48px;
       border-radius: 8px;
-      color: #d8e4e1;
-      background: transparent;
+      padding: 0 16px;
       display: grid;
       grid-template-columns: 22px 1fr auto;
       align-items: center;
       gap: 10px;
-      padding: 0 10px;
+      color: #dbe5f6;
+      background: transparent;
       text-align: left;
+      font-weight: 700;
     }
 
-    .nav button:hover,
-    .nav button.active {
-      background: rgba(255,255,255,0.1);
+    .nav-item:hover,
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(168, 85, 247, 0.45), rgba(255, 67, 168, 0.2));
       color: #fff;
     }
 
-    .nav small {
-      color: #88d0bf;
-      font-size: 11px;
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      height: 22px;
+      min-width: 36px;
+      border-radius: 5px;
+      padding: 0 7px;
+      color: #271904;
+      background: #f7d538;
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
     }
 
-    .side-meter {
+    .sidebar-footer {
       margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.12);
-      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 14px;
+      display: grid;
+      gap: 10px;
     }
 
-    .side-meter .balance {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
+    .balance-card {
+      border-radius: 8px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px;
     }
 
-    .side-meter b {
-      font-size: 22px;
+    .balance-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .balance-card strong {
+      font-size: 24px;
+      line-height: 1;
     }
 
     .meter {
-      height: 8px;
-      background: rgba(255,255,255,0.13);
+      height: 7px;
+      margin-top: 10px;
       border-radius: 999px;
+      background: rgba(255,255,255,0.1);
       overflow: hidden;
     }
 
-    .meter span {
+    .meter i {
       display: block;
+      width: 58%;
       height: 100%;
-      width: 57%;
-      background: linear-gradient(90deg, #64b59a, #f2b84b);
-    }
-
-    .side-meter p {
-      color: #a9b8b4;
-      margin: 10px 0 0;
-      font-size: 12px;
-      line-height: 1.45;
+      background: linear-gradient(90deg, var(--purple), var(--pink));
     }
 
     .main {
       min-width: 0;
-      display: flex;
-      flex-direction: column;
+      padding: 0 28px 64px;
+      position: relative;
     }
 
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 20;
-      height: 68px;
-      background: rgba(245,247,248,0.88);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--line);
-      display: flex;
+      z-index: 15;
+      min-height: 72px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
+      gap: 18px;
+      padding: 4px 0;
+      background: linear-gradient(180deg, rgba(5,5,7,0.96), rgba(5,5,7,0.72) 72%, transparent);
+      backdrop-filter: blur(10px);
+    }
+
+    .top-logo {
+      justify-self: center;
+      height: 42px;
+      min-width: 140px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(10, 10, 17, 0.68);
+      color: #f3d5ff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: inset 0 0 18px rgba(255, 67, 168, 0.1);
+      font-weight: 900;
+    }
+
+    .top-logo small {
+      position: relative;
+      top: -8px;
+      left: -2px;
+      background: #ff43a8;
+      color: white;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 8px;
+    }
+
+    .top-nav {
+      justify-self: center;
+      min-height: 54px;
+      border-radius: 999px;
+      padding: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(17, 24, 39, 0.86);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 46px rgba(0,0,0,0.36);
+    }
+
+    .top-nav button {
+      height: 42px;
+      padding: 0 18px;
+      border-radius: 999px;
+      color: #aeb8cb;
+      background: transparent;
+      font-weight: 800;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .top-nav button.active {
+      color: #fff;
+      background: rgba(255,255,255,0.065);
+    }
+
+    .top-nav button.has-dot::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      right: 12px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 12px var(--pink);
+    }
+
+    .account {
+      justify-self: end;
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .select-pill,
+    .sign-in {
+      height: 42px;
+      border-radius: 9px;
+      padding: 0 16px;
+      color: #c8d0df;
+      background: rgba(8, 8, 12, 0.72);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 800;
+    }
+
+    .sign-in {
+      background: linear-gradient(135deg, #cf3fb2, #e24f9e);
+      color: #fff;
+      border-color: transparent;
+      min-width: 86px;
+      justify-content: center;
+    }
+
+    .hero {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 6px 0 26px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(46px, 6vw, 76px);
+      line-height: 1;
+      font-weight: 950;
+      background: linear-gradient(90deg, #f3c7ff 0%, #ff68bd 48%, #9e5bff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 42px rgba(255, 67, 168, 0.16);
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 16px auto 0;
+      color: #b5bdd0;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .floating-note {
+      position: absolute;
+      color: rgba(151, 81, 255, 0.35);
+      font-size: 46px;
+      filter: drop-shadow(0 0 16px rgba(151, 81, 255, 0.2));
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .note-a { left: 8%; top: 20px; }
+    .note-b { right: 12%; top: 92px; font-size: 38px; }
+    .note-c { left: -16%; top: 330px; font-size: 44px; }
+    .note-d { right: -16%; top: 430px; font-size: 36px; }
+
+    .module-tabs {
+      max-width: 980px;
+      margin: 0 auto 20px;
+      min-height: 54px;
+      padding: 6px;
+      border-radius: 16px;
+      background: rgba(25, 32, 48, 0.94);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.42);
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .module-tab {
+      min-height: 42px;
+      border-radius: 12px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      color: #a8b1c3;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .module-tab.active {
+      color: #fff;
+      background: linear-gradient(135deg, #8a35ff, #ff3f9f);
+      box-shadow: var(--glow);
+    }
+
+    .module-tab .new {
+      position: absolute;
+      top: -11px;
+      right: 12px;
+      min-width: 34px;
+      height: 18px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #ff3f9f;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 950;
+    }
+
+    .generator-wrap {
+      max-width: 826px;
+      margin: 0 auto;
+    }
+
+    .generator-card {
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(100, 108, 255, 0.12), transparent 21rem),
+        linear-gradient(180deg, rgba(21, 28, 45, 0.96), rgba(13, 19, 31, 0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generator-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(91,160,255,0.08), transparent);
+      opacity: 0.6;
+    }
+
+    .generator-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 24px;
+    }
+
+    .mode-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
       gap: 16px;
     }
 
-    .title-wrap h1 {
-      margin: 0;
-      font-size: 20px;
-      line-height: 1.2;
+    .segmented {
+      justify-self: center;
+      min-width: 340px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      padding: 5px;
+      border-radius: 11px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(255,255,255,0.055);
     }
 
-    .title-wrap p {
-      margin: 4px 0 0;
-      color: var(--muted);
+    .segmented button {
+      height: 40px;
+      border-radius: 8px;
+      background: transparent;
+      color: #8f99ad;
+      font-weight: 900;
+    }
+
+    .segmented button.active {
+      background: linear-gradient(135deg, #9a4cff, #ee43a8);
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(168, 85, 247, 0.3);
+    }
+
+    .model-select {
+      height: 42px;
+      min-width: 132px;
+      border-radius: 9px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: #fff;
+      background: rgba(31, 42, 62, 0.92);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-weight: 950;
+    }
+
+    .mini-new {
+      height: 22px;
+      border-radius: 999px;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      background: #da43e8;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .field-block {
+      border-radius: 12px;
+      background: rgba(14, 24, 40, 0.82);
+      border: 1px solid rgba(91, 160, 255, 0.72);
+      box-shadow: 0 0 26px rgba(91, 160, 255, 0.18);
+      overflow: hidden;
+    }
+
+    .field-block textarea {
+      width: 100%;
+      min-height: 286px;
+      border: 0;
+      outline: 0;
+      resize: vertical;
+      padding: 28px 24px 18px;
+      color: #f7f7ff;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .field-block textarea::placeholder,
+    .soft-input::placeholder {
+      color: #8d96a9;
+    }
+
+    .field-footer {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 24px 16px;
+    }
+
+    .ghost-pill {
+      height: 38px;
+      border-radius: 999px;
+      padding: 0 16px;
+      color: #fff;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 850;
+    }
+
+    .counter {
+      color: var(--amber);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .style-card {
+      border-radius: 12px;
+      background: rgba(14, 24, 40, 0.72);
+      border: 1px solid rgba(255,255,255,0.075);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .style-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .style-head label {
+      color: #d94bec;
+      font-weight: 950;
+      font-size: 17px;
+    }
+
+    .toggle {
+      height: 30px;
+      min-width: 136px;
+      border-radius: 999px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #9da7b9;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.07);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .switch {
+      width: 34px;
+      height: 18px;
+      border-radius: 999px;
+      background: #3d4656;
+      padding: 2px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .switch i {
+      display: block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      transform: translateX(0);
+      transition: transform 160ms ease;
+    }
+
+    .toggle.active .switch {
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+    }
+
+    .toggle.active .switch i {
+      transform: translateX(16px);
+    }
+
+    .soft-input-wrap {
+      border-radius: 9px;
+      border: 1px solid rgba(91,160,255,0.74);
+      background: rgba(9, 17, 31, 0.76);
+      box-shadow: 0 0 22px rgba(91,160,255,0.18);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      min-height: 112px;
+      padding: 0 10px 0 0;
+    }
+
+    .soft-input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      padding: 18px 12px;
+      min-height: 92px;
+      resize: none;
+      line-height: 1.5;
+    }
+
+    .spark-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .quick-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .quick-tags span,
+    .new-label {
+      height: 22px;
+      border-radius: 5px;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      color: #aeb7c8;
+      background: rgba(255,255,255,0.075);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .more-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #cf7bff;
+      background: transparent;
+      font-weight: 900;
+      padding: 0;
+      min-height: 34px;
+    }
+
+    .new-label {
+      color: #fff;
+      background: #a855f7;
+      font-size: 11px;
+    }
+
+    .advanced {
+      display: none;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding-top: 4px;
+    }
+
+    .advanced.open {
+      display: grid;
+    }
+
+    .mini-field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .mini-field label {
+      color: #b5bfd2;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .mini-field select {
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #111827;
+      color: #e8edf8;
+      padding: 0 10px;
+      outline: 0;
+    }
+
+    .title-row {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .title-row label {
+      font-weight: 950;
+      color: #fff;
+    }
+
+    .title-row label span {
+      color: #ff5caa;
+    }
+
+    .title-input {
+      min-height: 58px;
+      border-radius: 9px;
+      border: 1px solid rgba(91,160,255,0.72);
+      background: rgba(70, 83, 103, 0.62);
+      box-shadow: 0 0 22px rgba(91,160,255,0.18);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 0 14px 0 20px;
+    }
+
+    .title-input input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      min-height: 54px;
+      font-size: 15px;
+    }
+
+    .cost-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .cost-item {
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.045);
+      padding: 12px;
+      text-align: left;
+    }
+
+    .cost-item span {
+      display: block;
+      color: #8e98ac;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .cost-item strong {
+      font-size: 15px;
+      color: #fff;
+    }
+
+    .generate {
+      min-height: 56px;
+      border-radius: 8px;
+      color: #fff;
+      background: linear-gradient(90deg, #f03b9c 0%, #a64cff 100%);
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+      font-size: 16px;
+      box-shadow: 0 18px 38px rgba(203, 66, 204, 0.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent, rgba(255,255,255,0.28), transparent);
+      transform: translateX(-120%);
+      transition: transform 520ms ease;
+    }
+
+    .generate:hover::after {
+      transform: translateX(120%);
+    }
+
+    .generate-note {
+      text-align: center;
+      color: #98a2b5;
+      margin: -10px 0 0;
       font-size: 13px;
     }
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
+    .progress-wrap {
+      display: none;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.28);
+      padding: 14px;
     }
 
-    .search {
-      width: clamp(180px, 24vw, 320px);
-      height: 38px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 12px;
-      color: var(--muted);
+    .progress-wrap.active {
+      display: block;
     }
 
-    .search input {
-      border: 0;
-      outline: 0;
-      min-width: 0;
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #c9d2e3;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .progress-track {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      overflow: hidden;
+    }
+
+    .progress-track i {
+      display: block;
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--pink), var(--violet), var(--blue));
+      transition: width 260ms ease;
+    }
+
+    .result-panel {
+      display: none;
+      margin-top: 22px;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .result-panel.active {
+      display: grid;
+    }
+
+    .song-card,
+    .license-card {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(15, 23, 42, 0.84);
+      overflow: hidden;
+      box-shadow: 0 16px 42px rgba(0,0,0,0.26);
+    }
+
+    .cover {
+      min-height: 142px;
+      padding: 18px;
+      display: flex;
+      align-items: end;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.42), transparent 5rem),
+        linear-gradient(135deg, #7c3aed 0%, #f03b9c 48%, #f6c247 100%);
+    }
+
+    .cover.alt {
+      background:
+        radial-gradient(circle at 65% 25%, rgba(255,255,255,0.32), transparent 5rem),
+        linear-gradient(135deg, #1d4ed8 0%, #7c3aed 50%, #ff43a8 100%);
+    }
+
+    .wave {
       width: 100%;
-      color: var(--ink);
-      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .wave i {
+      width: 5px;
+      min-height: 18px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.86);
+      animation: wave 1100ms ease-in-out infinite;
+    }
+
+    .wave i:nth-child(2n) { height: 36px; animation-delay: 100ms; }
+    .wave i:nth-child(3n) { height: 58px; animation-delay: 170ms; }
+    .wave i:nth-child(4n) { height: 28px; animation-delay: 250ms; }
+    .wave i:nth-child(5n) { height: 66px; animation-delay: 330ms; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(0.78); opacity: 0.7; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }
+
+    .song-body,
+    .license-card {
+      padding: 16px;
+    }
+
+    .song-body h3,
+    .license-card h3 {
+      margin: 0 0 7px;
+      font-size: 16px;
+    }
+
+    .song-body p,
+    .license-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .song-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .small-btn {
+      min-height: 34px;
+      border-radius: 8px;
+      padding: 0 11px;
+      background: rgba(255,255,255,0.07);
+      color: #e7ecf7;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .small-btn.primary {
+      background: linear-gradient(135deg, #8a35ff, #ff3f9f);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .license-list {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      color: #c4ccda;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .license-list li {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+    }
+
+    .check {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(73, 212, 157, 0.18);
+      color: var(--green);
+      font-size: 12px;
+      flex: none;
+      font-weight: 950;
+    }
+
+    .below {
+      max-width: 1120px;
+      margin: 48px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .info-card {
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(12, 18, 30, 0.72);
+      padding: 18px;
+    }
+
+    .info-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .info-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 80;
+      display: none;
+      max-width: min(360px, calc(100vw - 32px));
+      border-radius: 10px;
+      padding: 13px 15px;
+      background: #111827;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.4);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .toast.active {
+      display: block;
+    }
+
+    .mobile-toggle {
+      display: none;
     }
 
     .icon {
@@ -238,801 +1091,9 @@
       flex: none;
     }
 
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      background: #fff;
-      color: var(--ink);
-      border: 1px solid var(--line);
-    }
-
-    .icon-btn:hover {
-      border-color: #b8c8c3;
-    }
-
-    .btn {
-      height: 40px;
-      border-radius: 8px;
-      padding: 0 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .btn.primary {
-      background: var(--teal);
-      color: #fff;
-      box-shadow: 0 10px 24px rgba(15, 118, 110, 0.22);
-    }
-
-    .btn.secondary {
-      background: #fff;
-      color: var(--ink);
-      border: 1px solid var(--line);
-    }
-
-    .btn.warning {
-      background: #fff3e0;
-      color: #7a4d06;
-      border: 1px solid #f0d19c;
-    }
-
-    .content {
-      padding: 24px 28px 36px;
-    }
-
-    .view {
-      display: none;
-    }
-
-    .view.active {
-      display: block;
-    }
-
-    .workspace {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) var(--rightbar);
-      gap: 20px;
-      align-items: start;
-    }
-
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
-    .panel-header {
-      padding: 18px 18px 14px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .panel-header h2,
-    .section-title h2 {
-      margin: 0;
-      font-size: 17px;
-      line-height: 1.2;
-    }
-
-    .panel-header p,
-    .section-title p {
-      margin: 5px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tab {
-      min-height: 34px;
-      border-radius: 8px;
-      padding: 0 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: #f3f6f5;
-      color: var(--muted);
-      border: 1px solid transparent;
-      font-weight: 700;
-    }
-
-    .tab.active {
-      color: var(--teal);
-      background: var(--teal-2);
-      border-color: #b7dfd6;
-    }
-
-    .composer-body {
-      padding: 18px;
-    }
-
-    .mode-panel {
-      display: none;
-    }
-
-    .mode-panel.active {
-      display: block;
-    }
-
-    .field {
-      display: grid;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .field label {
-      font-size: 13px;
-      color: #384541;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-weight: 500;
-      font-size: 12px;
-    }
-
-    textarea,
-    input[type="text"],
-    select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fbfcfc;
-      outline: none;
-      color: var(--ink);
-    }
-
-    textarea:focus,
-    input[type="text"]:focus,
-    select:focus {
-      border-color: #87c7ba;
-      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 152px;
-      padding: 13px 14px;
-      line-height: 1.55;
-    }
-
-    input[type="text"],
-    select {
-      height: 40px;
-      padding: 0 12px;
-    }
-
-    .prompt-tools {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .chip {
-      height: 32px;
-      border-radius: 999px;
-      padding: 0 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #f3f6f5;
-      color: #40504b;
-      border: 1px solid var(--line);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .chip:hover,
-    .chip.active {
-      background: var(--teal-2);
-      color: var(--teal);
-      border-color: #b7dfd6;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .slider-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: center;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--teal);
-    }
-
-    .duration-badge,
-    .number-badge {
-      min-width: 66px;
-      height: 34px;
-      border-radius: 8px;
-      background: #eff5f3;
-      display: grid;
-      place-items: center;
-      color: var(--teal);
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    .quote-card {
-      position: sticky;
-      top: 88px;
-      overflow: hidden;
-    }
-
-    .quote-top {
-      padding: 18px;
-      background:
-        linear-gradient(135deg, rgba(15,118,110,0.1), rgba(216,95,69,0.08)),
-        #fff;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .quote-top span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .quote-number {
-      margin-top: 8px;
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .quote-number b {
-      font-size: 42px;
-      line-height: 1;
-    }
-
-    .quote-number small {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .quote-body {
-      padding: 16px 18px 18px;
-    }
-
-    .quote-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 11px 0;
-      border-bottom: 1px solid #edf1f0;
-      gap: 12px;
-      font-size: 13px;
-    }
-
-    .quote-line:last-child {
-      border-bottom: 0;
-    }
-
-    .quote-line strong {
-      font-size: 14px;
-    }
-
-    .refund {
-      margin: 14px 0;
-      padding: 12px;
-      background: #f3f7ed;
-      border: 1px solid #d8e9c5;
-      border-radius: 8px;
-      color: #435b25;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .generation-status {
-      display: none;
-      margin-top: 18px;
-      padding: 14px;
-      background: #fbfcfc;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-    }
-
-    .generation-status.active {
-      display: block;
-    }
-
-    .status-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .progress {
-      height: 9px;
-      background: #e8eeee;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .progress span {
-      display: block;
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--teal), var(--amber));
-      transition: width 300ms ease;
-    }
-
-    .results {
-      margin-top: 20px;
-      display: none;
-    }
-
-    .results.active {
-      display: block;
-    }
-
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .song-card {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      overflow: hidden;
-    }
-
-    .song-art {
-      min-height: 148px;
-      position: relative;
-      background:
-        linear-gradient(135deg, rgba(15,118,110,0.95), rgba(242,184,75,0.88) 48%, rgba(216,95,69,0.9)),
-        #0f766e;
-      display: grid;
-      place-items: center;
-    }
-
-    .song-art.second {
-      background:
-        linear-gradient(135deg, rgba(25,82,99,0.95), rgba(100,181,154,0.9) 45%, rgba(216,95,69,0.85)),
-        #195263;
-    }
-
-    .waveform {
-      width: min(78%, 380px);
-      height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-    }
-
-    .waveform i {
-      width: 5px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.88);
-      min-height: 16px;
-      animation: pulse 1200ms ease-in-out infinite;
-    }
-
-    .waveform i:nth-child(2n) { height: 42px; animation-delay: 120ms; }
-    .waveform i:nth-child(3n) { height: 58px; animation-delay: 240ms; }
-    .waveform i:nth-child(4n) { height: 30px; animation-delay: 360ms; }
-    .waveform i:nth-child(5n) { height: 66px; animation-delay: 480ms; }
-
-    @keyframes pulse {
-      0%, 100% { transform: scaleY(0.78); opacity: 0.74; }
-      50% { transform: scaleY(1); opacity: 1; }
-    }
-
-    .song-info {
-      padding: 14px;
-    }
-
-    .song-info h3 {
-      margin: 0 0 7px;
-      font-size: 15px;
-    }
-
-    .song-info p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .song-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    .mini-btn {
-      min-height: 32px;
-      border-radius: 8px;
-      padding: 0 10px;
-      background: #f3f6f5;
-      border: 1px solid var(--line);
-      color: #32423d;
-      font-size: 12px;
-      font-weight: 800;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .mini-btn.primary {
-      background: var(--teal);
-      border-color: var(--teal);
-      color: #fff;
-    }
-
-    .section-title {
-      margin: 0 0 16px;
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .project-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .project-card,
-    .license-card,
-    .plan-card,
-    .ledger-row {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: 0 10px 28px rgba(23,33,31,0.06);
-    }
-
-    .project-card {
-      overflow: hidden;
-    }
-
-    .project-thumb {
-      height: 130px;
-      background:
-        linear-gradient(110deg, #17312d 0%, #0f766e 42%, #f2b84b 72%, #d85f45 100%);
-      display: flex;
-      align-items: end;
-      padding: 14px;
-      color: #fff;
-    }
-
-    .project-thumb.alt {
-      background:
-        linear-gradient(110deg, #4b3a18 0%, #c58b21 40%, #64b59a 72%, #195263 100%);
-    }
-
-    .project-thumb.soft {
-      background:
-        linear-gradient(110deg, #704532 0%, #d85f45 38%, #f2b84b 66%, #f7efe4 100%);
-    }
-
-    .project-body {
-      padding: 14px;
-    }
-
-    .project-body h3 {
-      margin: 0;
-      font-size: 15px;
-    }
-
-    .meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .status-pill {
-      min-height: 26px;
-      border-radius: 999px;
-      padding: 0 9px;
-      display: inline-flex;
-      align-items: center;
-      font-size: 11px;
-      font-weight: 800;
-      color: #255449;
-      background: #dff1ea;
-    }
-
-    .status-pill.amber {
-      color: #68460a;
-      background: #fff0cf;
-    }
-
-    .status-pill.coral {
-      color: #7a2d1e;
-      background: #ffe4dc;
-    }
-
-    .license-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .license-card {
-      padding: 18px;
-    }
-
-    .license-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .license-head h3 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .license-table {
-      display: grid;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .license-table div {
-      display: grid;
-      grid-template-columns: 132px 1fr;
-      gap: 12px;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .license-table span:first-child {
-      color: var(--muted);
-    }
-
-    .usage-list {
-      display: grid;
-      gap: 10px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .usage-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      color: #40504b;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .check {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: #dff1ea;
-      color: var(--teal);
-      flex: none;
-      font-weight: 900;
-      font-size: 12px;
-    }
-
-    .credits-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .ledger {
-      display: grid;
-      gap: 10px;
-    }
-
-    .ledger-row {
-      min-height: 72px;
-      padding: 14px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .ledger-row h3 {
-      margin: 0 0 5px;
-      font-size: 14px;
-    }
-
-    .ledger-row p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .delta {
-      font-weight: 900;
-      color: var(--coral);
-    }
-
-    .delta.plus {
-      color: var(--teal);
-    }
-
-    .price-table {
-      padding: 16px;
-    }
-
-    .price-table h3 {
-      margin: 0 0 12px;
-      font-size: 16px;
-    }
-
-    .price-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid #edf1f0;
-      font-size: 13px;
-    }
-
-    .price-row:last-child {
-      border-bottom: 0;
-    }
-
-    .plans-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .plan-card {
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      min-height: 360px;
-      position: relative;
-    }
-
-    .plan-card.featured {
-      border-color: #87c7ba;
-      box-shadow: 0 18px 46px rgba(15,118,110,0.13);
-    }
-
-    .plan-card h3 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .plan-card .price {
-      margin: 14px 0 4px;
-      font-size: 34px;
-      font-weight: 900;
-    }
-
-    .plan-card .price small {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .plan-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .plan-card ul {
-      list-style: none;
-      padding: 0;
-      margin: 18px 0;
-      display: grid;
-      gap: 10px;
-      color: #40504b;
-      font-size: 13px;
-    }
-
-    .plan-card li {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-
-    .plan-card .btn {
-      margin-top: auto;
-      width: 100%;
-    }
-
-    .toast {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      z-index: 50;
-      min-width: 260px;
-      max-width: min(360px, calc(100vw - 32px));
-      padding: 14px 16px;
-      background: #17211f;
-      color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 18px 48px rgba(0,0,0,0.2);
-      display: none;
-      line-height: 1.45;
-      font-size: 13px;
-    }
-
-    .toast.active {
-      display: block;
-    }
-
-    .mobile-menu {
-      display: none;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
     @media (max-width: 1180px) {
-      :root {
-        --sidebar: 84px;
-        --rightbar: 300px;
-      }
-
-      .brand div,
-      .nav span,
-      .nav small,
-      .side-meter {
-        display: none;
+      .shell {
+        grid-template-columns: 82px minmax(0, 1fr);
       }
 
       .sidebar {
@@ -1040,671 +1101,490 @@
         padding-inline: 12px;
       }
 
-      .nav button {
-        width: 46px;
-        grid-template-columns: 1fr;
-        place-items: center;
-        padding: 0;
+      .brand b,
+      .collapse-dot,
+      .nav-title,
+      .nav-item span,
+      .nav-item .badge,
+      .sidebar-footer {
+        display: none;
       }
 
-      .project-grid,
-      .plans-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .nav-item {
+        width: 48px;
+        padding: 0;
+        grid-template-columns: 1fr;
+        place-items: center;
+      }
+
+      .topbar {
+        grid-template-columns: auto 1fr auto;
+      }
+
+      .top-logo {
+        justify-self: start;
+      }
+
+      .top-nav {
+        max-width: 100%;
+        overflow-x: auto;
+        justify-self: stretch;
+      }
+
+      .account .select-pill {
+        display: none;
       }
     }
 
-    @media (max-width: 920px) {
-      .app {
+    @media (max-width: 900px) {
+      body::after {
+        background: linear-gradient(180deg, rgba(5,5,7,0.08), rgba(5,5,7,0.92) 86%);
+      }
+
+      .shell {
         display: block;
       }
 
       .sidebar {
         position: fixed;
+        width: 264px;
         left: 0;
         top: 0;
         bottom: 0;
         transform: translateX(-100%);
         transition: transform 180ms ease;
-        z-index: 60;
-        width: 250px;
-        align-items: stretch;
       }
 
       .sidebar.open {
         transform: translateX(0);
       }
 
-      .brand div,
-      .nav span,
-      .nav small,
-      .side-meter {
+      .sidebar {
+        align-items: stretch;
+      }
+
+      .brand b,
+      .collapse-dot,
+      .nav-title,
+      .nav-item span,
+      .nav-item .badge,
+      .sidebar-footer {
         display: block;
       }
 
-      .nav button {
+      .nav-item {
         width: 100%;
+        padding: 0 16px;
         grid-template-columns: 22px 1fr auto;
         place-items: initial;
-        padding: 0 10px;
       }
 
-      .mobile-menu {
-        display: grid;
-      }
-
-      .topbar {
+      .main {
         padding-inline: 16px;
       }
 
-      .search {
+      .mobile-toggle {
+        display: inline-grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.07);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .topbar {
+        grid-template-columns: auto 1fr auto;
+      }
+
+      .top-nav {
         display: none;
       }
 
-      .content {
-        padding: 18px 16px 92px;
+      .top-logo {
+        justify-self: start;
       }
 
-      .workspace,
-      .license-layout,
-      .credits-layout {
+      .module-tabs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .generator-card {
+        padding: 22px;
+      }
+
+      .mode-row {
         grid-template-columns: 1fr;
       }
 
-      .quote-card {
-        position: static;
+      .segmented {
+        min-width: 0;
+        width: 100%;
       }
 
-      .form-grid {
+      .model-select {
+        justify-self: end;
+      }
+
+      .cost-strip,
+      .below,
+      .result-panel,
+      .advanced {
         grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 640px) {
-      .top-actions .btn.secondary,
-      .title-wrap p {
-        display: none;
+    @media (max-width: 560px) {
+      .main {
+        padding-inline: 12px;
       }
 
-      .results-grid,
-      .project-grid,
-      .plans-grid {
+      .hero h1 {
+        font-size: 42px;
+      }
+
+      .account .sign-in {
+        min-width: 72px;
+        padding-inline: 10px;
+      }
+
+      .module-tabs {
         grid-template-columns: 1fr;
       }
 
-      .panel-header,
-      .section-title {
+      .field-block textarea {
+        min-height: 230px;
+      }
+
+      .field-footer,
+      .style-head {
         align-items: flex-start;
         flex-direction: column;
       }
 
-      .license-table div {
+      .title-row {
         grid-template-columns: 1fr;
-        gap: 3px;
       }
     }
   </style>
 </head>
 <body>
-  <svg class="sr-only" aria-hidden="true">
-    <symbol id="i-spark" viewBox="0 0 24 24">
-      <path d="M12 3l1.8 5.3L19 10l-5.2 1.7L12 17l-1.8-5.3L5 10l5.2-1.7L12 3z"></path>
-      <path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"></path>
-    </symbol>
-    <symbol id="i-folder" viewBox="0 0 24 24">
-      <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-    </symbol>
-    <symbol id="i-license" viewBox="0 0 24 24">
-      <path d="M7 3h10a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V5a2 2 0 0 1 2-2z"></path>
-      <path d="M9 8h6"></path>
-      <path d="M9 12h4"></path>
-    </symbol>
-    <symbol id="i-credit" viewBox="0 0 24 24">
-      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-      <path d="M3 10h18"></path>
-      <path d="M7 15h4"></path>
-    </symbol>
-    <symbol id="i-tag" viewBox="0 0 24 24">
-      <path d="M20 13l-7 7L4 11V4h7l9 9z"></path>
-      <path d="M7.5 7.5h.01"></path>
-    </symbol>
-    <symbol id="i-search" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="7"></circle>
-      <path d="M20 20l-3.5-3.5"></path>
-    </symbol>
-    <symbol id="i-menu" viewBox="0 0 24 24">
-      <path d="M4 7h16"></path>
-      <path d="M4 12h16"></path>
-      <path d="M4 17h16"></path>
-    </symbol>
-    <symbol id="i-play" viewBox="0 0 24 24">
-      <path d="M8 5v14l11-7-11-7z"></path>
-    </symbol>
-    <symbol id="i-download" viewBox="0 0 24 24">
-      <path d="M12 3v12"></path>
-      <path d="M7 10l5 5 5-5"></path>
-      <path d="M5 20h14"></path>
-    </symbol>
-    <symbol id="i-video" viewBox="0 0 24 24">
-      <rect x="3" y="6" width="13" height="12" rx="2"></rect>
-      <path d="M16 10l5-3v10l-5-3z"></path>
-    </symbol>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path><path d="M10 20v-6h4v6"></path></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"></rect><path d="M16 10l5-3v10l-5-3z"></path></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5L5 19"></path></symbol>
+    <symbol id="i-dance" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"></circle><path d="M8 21l3-7"></path><path d="M16 21l-3-7"></path><path d="M7 10l5-3 5 3"></path><path d="M12 7v7"></path></symbol>
+    <symbol id="i-cut" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M20 4L8.5 15.5"></path><path d="M14 14l6 6"></path></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M9 13h6"></path><path d="M9 17h6"></path></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"></path></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3c3 3.3 3 14.7 0 18"></path><path d="M12 3c-3 3.3-3 14.7 0 18"></path></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></symbol>
   </svg>
 
-  <div class="app">
+  <div class="shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <div class="mark">S</div>
-        <div>
-          <strong>SongPilot</strong>
-          <span>AI Music Studio</span>
-        </div>
+        <div class="logo">♪</div>
+        <b>SongPilot</b>
+        <button class="collapse-dot" title="收起导航">‹</button>
       </div>
 
-      <nav class="nav" aria-label="主导航">
-        <button class="nav-link active" data-view="create" title="创建中心">
-          <svg class="icon"><use href="#i-spark"></use></svg>
-          <span>创建中心</span>
-          <small>Live</small>
+      <div class="nav-section">
+        <button class="nav-item active" data-nav="Home">
+          <svg class="icon"><use href="#i-home"></use></svg>
+          <span>Home</span>
         </button>
-        <button class="nav-link" data-view="projects" title="项目库">
-          <svg class="icon"><use href="#i-folder"></use></svg>
-          <span>项目库</span>
-          <small>12</small>
+        <button class="nav-item" data-nav="Create Song">
+          <svg class="icon"><use href="#i-music"></use></svg>
+          <span>Create Song</span>
         </button>
-        <button class="nav-link" data-view="license" title="授权中心">
-          <svg class="icon"><use href="#i-license"></use></svg>
-          <span>授权中心</span>
-          <small>8</small>
-        </button>
-        <button class="nav-link" data-view="credits" title="Credits">
-          <svg class="icon"><use href="#i-credit"></use></svg>
-          <span>Credits</span>
-          <small>343</small>
-        </button>
-        <button class="nav-link" data-view="pricing" title="套餐">
-          <svg class="icon"><use href="#i-tag"></use></svg>
-          <span>套餐</span>
-          <small>Pro</small>
-        </button>
-      </nav>
+      </div>
 
-      <div class="side-meter">
-        <div class="balance">
-          <span>本月余额</span>
-          <b id="sideBalance">343</b>
+      <div class="nav-section">
+        <div class="nav-title">Video & Photo</div>
+        <button class="nav-item" data-nav="Music Video">
+          <svg class="icon"><use href="#i-video"></use></svg>
+          <span>Music Video</span>
+        </button>
+        <button class="nav-item" data-nav="Singing Video">
+          <svg class="icon"><use href="#i-video"></use></svg>
+          <span>Singing Video</span>
+        </button>
+        <button class="nav-item" data-nav="Create Photo">
+          <svg class="icon"><use href="#i-image"></use></svg>
+          <span>Create Photo</span>
+        </button>
+        <button class="nav-item" data-nav="AI Dancing Video">
+          <svg class="icon"><use href="#i-dance"></use></svg>
+          <span>AI Dancing Video</span>
+          <small class="badge">New</small>
+        </button>
+        <button class="nav-item" data-nav="Lyrics Video">
+          <svg class="icon"><use href="#i-doc"></use></svg>
+          <span>Lyrics Video</span>
+          <small class="badge">New</small>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">Music Tools</div>
+        <button class="nav-item" data-nav="Stem Splitter">
+          <svg class="icon"><use href="#i-cut"></use></svg>
+          <span>Stem Splitter</span>
+        </button>
+        <button class="nav-item" data-nav="Vocal Remover">
+          <svg class="icon"><use href="#i-cut"></use></svg>
+          <span>Vocal Remover</span>
+        </button>
+        <button class="nav-item" data-nav="Music Prompt">
+          <svg class="icon"><use href="#i-doc"></use></svg>
+          <span>Music Prompt</span>
+        </button>
+        <button class="nav-item" data-nav="Pricing">
+          <span style="font-size:22px;line-height:1">$</span>
+          <span>Pricing</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="balance-card">
+          <span>Credits balance</span>
+          <strong><span id="sideCredits">343</span></strong>
+          <div class="meter"><i></i></div>
         </div>
-        <div class="meter"><span id="balanceMeter"></span></div>
-        <p>所有生成任务都会先报价。系统失败自动返还 credits，并写入明细。</p>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
-        <button class="icon-btn mobile-menu" id="menuBtn" aria-label="打开导航">
+        <button class="mobile-toggle" id="mobileMenu" aria-label="打开导航">
           <svg class="icon"><use href="#i-menu"></use></svg>
         </button>
-        <div class="title-wrap">
-          <h1 id="pageTitle">创建中心</h1>
-          <p id="pageDesc">输入灵感，生成歌曲、封面、歌词视频和授权凭证。</p>
+
+        <div class="top-logo">
+          <span>♫</span>
+          <span>SongPilot</span>
+          <small>AI</small>
         </div>
-        <div class="top-actions">
-          <label class="search">
-            <svg class="icon"><use href="#i-search"></use></svg>
-            <input placeholder="搜索项目、授权、任务 ID">
-          </label>
-          <button class="btn secondary" data-view-jump="credits">
-            <svg class="icon"><use href="#i-credit"></use></svg>
-            343 credits
+
+        <nav class="top-nav" aria-label="顶部导航">
+          <button class="active">Create Song</button>
+          <button>Music Video</button>
+          <button class="has-dot">Image Gen</button>
+          <button>Pricing</button>
+          <button>Contact</button>
+        </nav>
+
+        <div class="account">
+          <button class="select-pill">
+            <svg class="icon"><use href="#i-globe"></use></svg>
+            English
           </button>
-          <button class="btn primary" data-view-jump="pricing">升级</button>
+          <button class="sign-in">Sign In</button>
         </div>
       </header>
 
-      <section class="content">
-        <div class="view active" id="view-create">
-          <div class="workspace">
-            <section class="panel">
-              <div class="panel-header">
-                <div>
-                  <h2>新建音乐项目</h2>
-                  <p>默认生成两个版本，生成前会显示完整报价和可下载资产。</p>
-                </div>
-                <div class="tabs" role="tablist" aria-label="创作模式">
-                  <button class="tab active" data-mode="prompt">文本成歌</button>
-                  <button class="tab" data-mode="lyrics">歌词成歌</button>
-                  <button class="tab" data-mode="instrumental">纯伴奏</button>
-                  <button class="tab" data-mode="video">歌词视频</button>
-                </div>
+      <section class="hero">
+        <span class="floating-note note-a">♫</span>
+        <span class="floating-note note-b">♪</span>
+        <span class="floating-note note-c">♬</span>
+        <span class="floating-note note-d">♪</span>
+        <h1>AI Song & Video Generator</h1>
+        <p>用歌词、prompt 或模板快速生成歌曲，并在同一个项目里继续生成封面、歌词视频和商用授权凭证。</p>
+      </section>
+
+      <section class="module-tabs" aria-label="功能切换">
+        <button class="module-tab active" data-module="song" data-cost="3" data-placeholder="Enter lyrics or lyrics prompts here...">
+          <svg class="icon"><use href="#i-spark"></use></svg>
+          AI Song Generator
+        </button>
+        <button class="module-tab" data-module="music-video" data-cost="48" data-placeholder="Describe the visual mood, scenes, camera movement and platform ratio...">
+          <svg class="icon"><use href="#i-video"></use></svg>
+          AI Music Video
+          <span class="new">NEW</span>
+        </button>
+        <button class="module-tab" data-module="singing" data-cost="36" data-placeholder="Upload or describe a portrait, then add lyrics for lip-sync singing...">
+          <svg class="icon"><use href="#i-music"></use></svg>
+          AI Singing Video
+          <span class="new">NEW</span>
+        </button>
+        <button class="module-tab" data-module="lyric-video" data-cost="18" data-placeholder="Paste lyrics and choose subtitle animation, cover style and timing...">
+          <svg class="icon"><use href="#i-doc"></use></svg>
+          Lyric Video
+          <span class="new">NEW</span>
+        </button>
+        <button class="module-tab" data-module="dance" data-cost="52" data-placeholder="Describe dance style, character, outfit and rhythm matching...">
+          <svg class="icon"><use href="#i-dance"></use></svg>
+          AI Dance
+          <span class="new">NEW</span>
+        </button>
+        <button class="module-tab" data-module="seedance" data-cost="50" data-placeholder="Create a cinematic motion video from text, image or audio direction...">
+          <svg class="icon"><use href="#i-video"></use></svg>
+          Seedance 2.0
+          <span class="new">NEW</span>
+        </button>
+      </section>
+
+      <section class="generator-wrap">
+        <div class="generator-card">
+          <div class="generator-inner">
+            <div class="mode-row">
+              <div class="segmented">
+                <button class="mode-btn active" data-mode="Lyric to Music">Lyric to Music</button>
+                <button class="mode-btn" data-mode="Prompt to Music">Prompt to Music</button>
               </div>
+              <button class="model-select" id="modelBtn">
+                <span>V5</span>
+                <span class="mini-new">NEW</span>
+                <span>⌄</span>
+              </button>
+            </div>
 
-              <div class="composer-body">
-                <div class="mode-panel active" data-mode-panel="prompt">
-                  <div class="field">
-                    <label for="promptInput">创作描述 <span class="hint">建议包含场景、情绪、风格和用途</span></label>
-                    <textarea id="promptInput">一首适合科技产品发布短片的中文流行电子歌，主题是把复杂工作变简单。副歌要有记忆点，节奏坚定，适合 60 秒竖版视频。</textarea>
-                  </div>
-                  <div class="prompt-tools">
-                    <button class="chip prompt-chip">产品发布</button>
-                    <button class="chip prompt-chip">播客片头</button>
-                    <button class="chip prompt-chip">游戏战斗</button>
-                    <button class="chip prompt-chip">婚礼祝福</button>
-                    <button class="chip prompt-chip">Lo-fi 学习</button>
-                  </div>
-                </div>
-
-                <div class="mode-panel" data-mode-panel="lyrics">
-                  <div class="field">
-                    <label for="lyricsInput">歌词 <span class="hint">支持 Verse、Chorus、Bridge 标签</span></label>
-                    <textarea id="lyricsInput">[Verse]
-灯亮起的时候，城市醒来
-我们把明天写进节拍
-
-[Chorus]
-让声音穿过人海
-把每一次灵感打开</textarea>
-                  </div>
-                  <div class="prompt-tools">
-                    <button class="chip">AI 改写歌词</button>
-                    <button class="chip">检查押韵</button>
-                    <button class="chip">补全副歌</button>
-                  </div>
-                </div>
-
-                <div class="mode-panel" data-mode-panel="instrumental">
-                  <div class="field">
-                    <label for="instInput">伴奏描述 <span class="hint">可选择是否无缝循环</span></label>
-                    <textarea id="instInput">适合独立游戏主菜单的温暖合成器伴奏，80 BPM，轻微颗粒质感，可以无缝循环。</textarea>
-                  </div>
-                  <div class="prompt-tools">
-                    <button class="chip active" id="loopToggle">无缝循环</button>
-                    <button class="chip">突出钢琴</button>
-                    <button class="chip">突出鼓组</button>
-                    <button class="chip">降低人声</button>
-                  </div>
-                </div>
-
-                <div class="mode-panel" data-mode-panel="video">
-                  <div class="field">
-                    <label for="videoInput">视频说明 <span class="hint">将基于当前歌曲生成 9:16 歌词视频</span></label>
-                    <textarea id="videoInput">使用专辑封面、同步歌词和动态波形，整体风格干净，适合 TikTok 和 Shorts。</textarea>
-                  </div>
-                  <div class="prompt-tools">
-                    <button class="chip active">9:16</button>
-                    <button class="chip">1:1</button>
-                    <button class="chip">16:9</button>
-                    <button class="chip">品牌模板</button>
-                  </div>
-                </div>
-
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="styleSelect">风格</label>
-                    <select id="styleSelect">
-                      <option value="pop">Pop Electronic</option>
-                      <option value="lofi">Lo-fi</option>
-                      <option value="rock">Indie Rock</option>
-                      <option value="cinematic">Cinematic</option>
-                      <option value="hiphop">Hip-hop</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label for="moodSelect">情绪</label>
-                    <select id="moodSelect">
-                      <option value="uplifting">坚定明亮</option>
-                      <option value="warm">温暖</option>
-                      <option value="epic">史诗</option>
-                      <option value="calm">平静</option>
-                      <option value="sad">克制伤感</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label for="voiceSelect">人声</label>
-                    <select id="voiceSelect">
-                      <option value="female">女声</option>
-                      <option value="male">男声</option>
-                      <option value="duet">男女对唱</option>
-                      <option value="none">无</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="durationRange">时长</label>
-                    <div class="slider-row">
-                      <input id="durationRange" type="range" min="30" max="240" step="15" value="90">
-                      <div class="duration-badge"><span id="durationLabel">90s</span></div>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <label for="versionRange">版本数</label>
-                    <div class="slider-row">
-                      <input id="versionRange" type="range" min="1" max="4" step="1" value="2">
-                      <div class="number-badge"><span id="versionLabel">2 个</span></div>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <label for="privacySelect">隐私</label>
-                    <select id="privacySelect">
-                      <option value="private">私密项目</option>
-                      <option value="public">公开到灵感池</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="generation-status" id="generationStatus">
-                  <div class="status-head">
-                    <strong id="statusText">任务排队中</strong>
-                    <span id="progressText">0%</span>
-                  </div>
-                  <div class="progress"><span id="progressBar"></span></div>
-                </div>
-
-                <div class="results" id="results">
-                  <div class="section-title">
-                    <div>
-                      <h2>生成结果</h2>
-                      <p>已创建项目“Launch Pulse”。继续生成封面或歌词视频会沿用同一授权链路。</p>
-                    </div>
-                    <button class="btn secondary" data-view-jump="projects">
-                      <svg class="icon"><use href="#i-folder"></use></svg>
-                      查看项目
-                    </button>
-                  </div>
-                  <div class="results-grid">
-                    <article class="song-card">
-                      <div class="song-art" aria-hidden="true">
-                        <div class="waveform">
-                          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-                        </div>
-                      </div>
-                      <div class="song-info">
-                        <h3>Launch Pulse A</h3>
-                        <p>Pop Electronic · 女声 · 90s · 商用授权待签发</p>
-                        <div class="song-actions">
-                          <button class="mini-btn primary" data-toast="正在播放试听片段">
-                            <svg class="icon"><use href="#i-play"></use></svg>
-                            播放
-                          </button>
-                          <button class="mini-btn" data-toast="已加入歌词视频任务草稿">
-                            <svg class="icon"><use href="#i-video"></use></svg>
-                            歌词视频
-                          </button>
-                          <button class="mini-btn" data-toast="授权卡已生成，可在授权中心查看">
-                            <svg class="icon"><use href="#i-download"></use></svg>
-                            导出
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                    <article class="song-card">
-                      <div class="song-art second" aria-hidden="true">
-                        <div class="waveform">
-                          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-                        </div>
-                      </div>
-                      <div class="song-info">
-                        <h3>Launch Pulse B</h3>
-                        <p>Pop Electronic · 女声 · 90s · 副歌更强</p>
-                        <div class="song-actions">
-                          <button class="mini-btn primary" data-toast="正在播放试听片段">
-                            <svg class="icon"><use href="#i-play"></use></svg>
-                            播放
-                          </button>
-                          <button class="mini-btn" data-toast="已收藏 Launch Pulse B">
-                            收藏
-                          </button>
-                          <button class="mini-btn" data-toast="已导出 WAV，并写入授权记录">
-                            <svg class="icon"><use href="#i-download"></use></svg>
-                            WAV
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <aside class="panel quote-card">
-              <div class="quote-top">
-                <span>生成前报价</span>
-                <div class="quote-number">
-                  <b id="quoteCredits">22</b>
-                  <small>credits</small>
-                </div>
-              </div>
-              <div class="quote-body">
-                <div class="quote-line">
-                  <span>任务类型</span>
-                  <strong id="quoteType">文本成歌</strong>
-                </div>
-                <div class="quote-line">
-                  <span>生成版本</span>
-                  <strong id="quoteVersions">2 个</strong>
-                </div>
-                <div class="quote-line">
-                  <span>预计时长</span>
-                  <strong id="quoteDuration">90 秒</strong>
-                </div>
-                <div class="quote-line">
-                  <span>余额</span>
-                  <strong><span id="balanceText">343</span> credits</strong>
-                </div>
-                <div class="quote-line">
-                  <span>预计耗时</span>
-                  <strong id="etaText">约 55 秒</strong>
-                </div>
-                <div class="refund">系统失败、内容安全拒绝、渲染超时均自动返还。所有扣费会进入 Credits 明细。</div>
-                <button class="btn primary" id="generateBtn" style="width: 100%;">
+            <div class="field-block">
+              <textarea id="mainInput" maxlength="5000" placeholder="Enter lyrics or lyrics prompts here..."></textarea>
+              <div class="field-footer">
+                <button class="ghost-pill" id="generateLyrics">
                   <svg class="icon"><use href="#i-spark"></use></svg>
-                  生成并保存项目
+                  lyrics generate ✨
                 </button>
-                <button class="btn secondary" id="saveDraftBtn" style="width: 100%; margin-top: 10px;">保存草稿</button>
+                <span class="counter"><span id="mainCount">0</span>/5000</span>
               </div>
-            </aside>
+            </div>
+
+            <div class="style-card">
+              <div class="style-head">
+                <label for="styleInput">Styles</label>
+                <button class="toggle" id="instrumentalToggle">
+                  <span class="switch"><i></i></span>
+                  Instrumental
+                </button>
+              </div>
+              <div class="soft-input-wrap">
+                <textarea class="soft-input" id="styleInput" maxlength="1000" placeholder="Enter styles: Pop, Rock, Jazz, Classical, Women voice..."></textarea>
+                <button class="spark-btn" title="智能补全">
+                  <svg class="icon"><use href="#i-spark"></use></svg>
+                </button>
+              </div>
+              <div class="field-footer" style="padding: 0;">
+                <div class="quick-tags">
+                  <span># Style</span>
+                  <span># Moods</span>
+                  <span># Voices</span>
+                  <span># Tempos</span>
+                </div>
+                <span class="counter"><span id="styleCount">0</span>/1000</span>
+              </div>
+              <button class="more-controls" id="moreControls">
+                <span class="new-label">New</span>
+                More Controls
+                <span id="moreArrow">⌄</span>
+              </button>
+              <div class="advanced" id="advancedPanel">
+                <div class="mini-field">
+                  <label>Language</label>
+                  <select>
+                    <option>Auto</option>
+                    <option>Chinese</option>
+                    <option>English</option>
+                    <option>Japanese</option>
+                  </select>
+                </div>
+                <div class="mini-field">
+                  <label>Duration</label>
+                  <select id="durationSelect">
+                    <option value="60">60 seconds</option>
+                    <option value="90" selected>90 seconds</option>
+                    <option value="120">120 seconds</option>
+                  </select>
+                </div>
+                <div class="mini-field">
+                  <label>Privacy</label>
+                  <select>
+                    <option>Private Project</option>
+                    <option>Public Showcase</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="title-row">
+              <label>Title<span>*</span></label>
+              <div class="title-input">
+                <input id="titleInput" maxlength="30" placeholder="Enter a memorable title for your song">
+                <span class="counter"><span id="titleCount">0</span>/30</span>
+              </div>
+            </div>
+
+            <div class="cost-strip">
+              <div class="cost-item">
+                <span>生成前报价</span>
+                <strong><span id="costText">3</span> credits</strong>
+              </div>
+              <div class="cost-item">
+                <span>余额</span>
+                <strong><span id="balanceText">343</span> credits</strong>
+              </div>
+              <div class="cost-item">
+                <span>保障</span>
+                <strong>失败自动返还</strong>
+              </div>
+            </div>
+
+            <button class="generate" id="generateBtn">Generate Music</button>
+            <p class="generate-note">Generating once costs <span id="costTextSmall">3</span> credits · 商用下载会生成 License Card</p>
+
+            <div class="progress-wrap" id="progressWrap">
+              <div class="progress-head">
+                <span id="progressLabel">任务排队中</span>
+                <span id="progressValue">0%</span>
+              </div>
+              <div class="progress-track"><i id="progressBar"></i></div>
+            </div>
           </div>
         </div>
 
-        <div class="view" id="view-projects">
-          <div class="section-title">
-            <div>
-              <h2>项目库</h2>
-              <p>歌曲、封面、视频、授权和导出记录都绑定到同一个项目。</p>
+        <div class="result-panel" id="resultPanel">
+          <article class="song-card">
+            <div class="cover">
+              <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             </div>
-            <button class="btn primary" data-view-jump="create">
-              <svg class="icon"><use href="#i-spark"></use></svg>
-              新建项目
-            </button>
-          </div>
-          <div class="project-grid">
-            <article class="project-card">
-              <div class="project-thumb">
-                <strong>Launch Pulse</strong>
+            <div class="song-body">
+              <h3 id="songTitleA">Midnight Launch A</h3>
+              <p>V5 · Pop Electronic · 90s · 已保存到项目库</p>
+              <div class="song-actions">
+                <button class="small-btn primary" data-toast="正在播放试听片段">Play</button>
+                <button class="small-btn" data-toast="已导出 MP3，并写入下载记录">MP3</button>
+                <button class="small-btn" data-toast="已进入歌词视频生成流程">Lyric Video</button>
               </div>
-              <div class="project-body">
-                <h3>Launch Pulse</h3>
-                <p class="hint">2 首歌 · 1 张封面 · 1 个授权</p>
-                <div class="meta">
-                  <span class="status-pill">Ready</span>
-                  <span class="status-pill">Licensed</span>
-                </div>
-              </div>
-            </article>
-            <article class="project-card">
-              <div class="project-thumb alt">
-                <strong>Indie Game Menu</strong>
-              </div>
-              <div class="project-body">
-                <h3>Indie Game Menu</h3>
-                <p class="hint">1 首伴奏 · 循环版本 · WAV</p>
-                <div class="meta">
-                  <span class="status-pill">Ready</span>
-                  <span class="status-pill amber">Needs License</span>
-                </div>
-              </div>
-            </article>
-            <article class="project-card">
-              <div class="project-thumb soft">
-                <strong>Wedding Chorus</strong>
-              </div>
-              <div class="project-body">
-                <h3>Wedding Chorus</h3>
-                <p class="hint">3 个版本 · 歌词待修改</p>
-                <div class="meta">
-                  <span class="status-pill amber">Draft</span>
-                </div>
-              </div>
-            </article>
-          </div>
+            </div>
+          </article>
+          <article class="license-card">
+            <h3>License Ready</h3>
+            <p>每个商用资产都绑定项目、模型版本、生成时间和 prompt hash，避免 MakeSong 类产品常见的授权不透明问题。</p>
+            <ul class="license-list">
+              <li><span class="check">✓</span><span>付费生成可下载授权凭证</span></li>
+              <li><span class="check">✓</span><span>任务失败自动返还 credits</span></li>
+              <li><span class="check">✓</span><span>歌曲、封面、视频归入同一项目链路</span></li>
+            </ul>
+          </article>
         </div>
+      </section>
 
-        <div class="view" id="view-license">
-          <div class="section-title">
-            <div>
-              <h2>授权中心</h2>
-              <p>每个商用资产都有可下载授权凭证，包含模型版本、生成时间和使用范围。</p>
-            </div>
-            <button class="btn secondary" data-toast="授权 PDF 已加入下载队列">
-              <svg class="icon"><use href="#i-download"></use></svg>
-              下载 PDF
-            </button>
-          </div>
-          <div class="license-layout">
-            <article class="license-card">
-              <div class="license-head">
-                <div>
-                  <h3>License SP-20260511-1842</h3>
-                  <p class="hint">Launch Pulse · Song + Cover + Lyric Video</p>
-                </div>
-                <span class="status-pill">Commercial</span>
-              </div>
-              <div class="license-table">
-                <div><span>生成时间</span><strong>2026-05-11 14:18</strong></div>
-                <div><span>套餐快照</span><strong>Studio Plan，私密生成</strong></div>
-                <div><span>模型版本</span><strong>SongPilot Music v1.0</strong></div>
-                <div><span>Prompt Hash</span><strong>9C2F-41AA-7E19</strong></div>
-                <div><span>可用范围</span><strong>短视频、广告素材、播客、游戏内非独占使用</strong></div>
-                <div><span>限制</span><strong>不得冒充真实艺人授权，不得转售为独立素材库</strong></div>
-              </div>
-            </article>
-            <aside class="license-card">
-              <h3>商用前检查</h3>
-              <ul class="usage-list" style="margin-top: 14px;">
-                <li><span class="check">✓</span><span>当前资产由付费套餐生成，可用于商业项目。</span></li>
-                <li><span class="check">✓</span><span>用户输入未包含参考音频，授权链路完整。</span></li>
-                <li><span class="check">✓</span><span>下载记录会保留在项目资产和授权中心。</span></li>
-                <li><span class="check">✓</span><span>如用于高曝光广告，可提交人工复核。</span></li>
-              </ul>
-            </aside>
-          </div>
-        </div>
-
-        <div class="view" id="view-credits">
-          <div class="section-title">
-            <div>
-              <h2>Credits 明细</h2>
-              <p>把每次扣费、返还、赠送和订阅发放都展示给用户，避免黑箱感。</p>
-            </div>
-            <button class="btn warning" data-view-jump="pricing">购买 credits</button>
-          </div>
-          <div class="credits-layout">
-            <div class="ledger">
-              <div class="ledger-row">
-                <div>
-                  <h3>生成歌曲 · Launch Pulse</h3>
-                  <p>2 个版本 · 90 秒 · 任务 ID TASK-8841</p>
-                </div>
-                <span class="delta">-22</span>
-              </div>
-              <div class="ledger-row">
-                <div>
-                  <h3>系统失败返还 · Lyric Video</h3>
-                  <p>渲染超时，已自动返还 · REF-1180</p>
-                </div>
-                <span class="delta plus">+40</span>
-              </div>
-              <div class="ledger-row">
-                <div>
-                  <h3>导出 WAV · Launch Pulse B</h3>
-                  <p>已写入授权下载记录</p>
-                </div>
-                <span class="delta">-4</span>
-              </div>
-              <div class="ledger-row">
-                <div>
-                  <h3>Studio 月度发放</h3>
-                  <p>2026-05 周期 credits</p>
-                </div>
-                <span class="delta plus">+1800</span>
-              </div>
-            </div>
-            <aside class="panel price-table">
-              <h3>功能价格表</h3>
-              <div class="price-row"><span>歌曲 1 个版本</span><strong>12</strong></div>
-              <div class="price-row"><span>歌曲 2 个版本</span><strong>22</strong></div>
-              <div class="price-row"><span>WAV 导出</span><strong>4</strong></div>
-              <div class="price-row"><span>封面图</span><strong>6</strong></div>
-              <div class="price-row"><span>歌词视频 30s</span><strong>40</strong></div>
-              <div class="price-row"><span>分轨</span><strong>10</strong></div>
-            </aside>
-          </div>
-        </div>
-
-        <div class="view" id="view-pricing">
-          <div class="section-title">
-            <div>
-              <h2>套餐</h2>
-              <p>套餐页直接说明每月 credits、可生成次数、取消规则和商用权益。</p>
-            </div>
-          </div>
-          <div class="plans-grid">
-            <article class="plan-card">
-              <h3>Free</h3>
-              <div class="price">$0 <small>/ 试用</small></div>
-              <p>验证生成质量，适合第一次体验。</p>
-              <ul>
-                <li><span class="check">✓</span><span>30 一次性 credits</span></li>
-                <li><span class="check">✓</span><span>公开生成</span></li>
-                <li><span class="check">✓</span><span>低速队列</span></li>
-              </ul>
-              <button class="btn secondary" data-toast="已切换到 Free 方案预览">当前体验</button>
-            </article>
-            <article class="plan-card featured">
-              <h3>Creator</h3>
-              <div class="price">$12 <small>/ 月</small></div>
-              <p>适合短视频创作者和频道运营。</p>
-              <ul>
-                <li><span class="check">✓</span><span>600 credits / 月</span></li>
-                <li><span class="check">✓</span><span>商用授权</span></li>
-                <li><span class="check">✓</span><span>私密生成</span></li>
-              </ul>
-              <button class="btn primary" data-toast="Creator 套餐已加入结账流程">选择 Creator</button>
-            </article>
-            <article class="plan-card">
-              <h3>Studio</h3>
-              <div class="price">$29 <small>/ 月</small></div>
-              <p>适合独立音乐人和视频团队。</p>
-              <ul>
-                <li><span class="check">✓</span><span>1800 credits / 月</span></li>
-                <li><span class="check">✓</span><span>WAV、分轨、歌词视频</span></li>
-                <li><span class="check">✓</span><span>优先队列</span></li>
-              </ul>
-              <button class="btn secondary" data-toast="Studio 套餐已加入结账流程">选择 Studio</button>
-            </article>
-            <article class="plan-card">
-              <h3>Team</h3>
-              <div class="price">$79 <small>/ 月</small></div>
-              <p>适合内容团队、广告和 API 使用。</p>
-              <ul>
-                <li><span class="check">✓</span><span>6000 credits / 月</span></li>
-                <li><span class="check">✓</span><span>团队空间</span></li>
-                <li><span class="check">✓</span><span>API 和发票</span></li>
-              </ul>
-              <button class="btn secondary" data-toast="Team 套餐已加入结账流程">联系开通</button>
-            </article>
-          </div>
-        </div>
+      <section class="below">
+        <article class="info-card">
+          <h3>像 MakeSong 一样低门槛</h3>
+          <p>核心生成器前置，用户进入页面就能输入歌词或 prompt，不需要先理解复杂工作台。</p>
+        </article>
+        <article class="info-card">
+          <h3>比 credits 黑箱更透明</h3>
+          <p>每次点击生成前显示消耗、余额和失败返还规则，所有记录进入 Credits 明细。</p>
+        </article>
+        <article class="info-card">
+          <h3>面向发布闭环</h3>
+          <p>歌曲之后继续生成封面、歌词视频和授权凭证，适合短视频和商业内容生产。</p>
+        </article>
       </section>
     </main>
   </div>
@@ -1713,82 +1593,42 @@
 
   <script>
     const state = {
-      mode: "prompt",
       balance: 343,
-      baseBalance: 343,
+      cost: 3,
+      module: "song",
+      mode: "Lyric to Music",
       generating: false
     };
 
-    const viewMeta = {
-      create: ["创建中心", "输入灵感，生成歌曲、封面、歌词视频和授权凭证。"],
-      projects: ["项目库", "集中管理歌曲版本、视频、封面和导出记录。"],
-      license: ["授权中心", "查看每个商业资产的授权范围、限制和下载记录。"],
-      credits: ["Credits", "所有扣费和返还都透明可追溯。"],
-      pricing: ["套餐", "选择适合创作频率和团队规模的方案。"]
-    };
-
-    const modeNames = {
-      prompt: "文本成歌",
-      lyrics: "歌词成歌",
-      instrumental: "纯伴奏",
-      video: "歌词视频"
-    };
-
-    const modeBase = {
-      prompt: 11,
-      lyrics: 10,
-      instrumental: 8,
-      video: 40
-    };
-
-    const pageTitle = document.getElementById("pageTitle");
-    const pageDesc = document.getElementById("pageDesc");
-    const quoteCredits = document.getElementById("quoteCredits");
-    const quoteType = document.getElementById("quoteType");
-    const quoteVersions = document.getElementById("quoteVersions");
-    const quoteDuration = document.getElementById("quoteDuration");
-    const durationRange = document.getElementById("durationRange");
-    const versionRange = document.getElementById("versionRange");
-    const durationLabel = document.getElementById("durationLabel");
-    const versionLabel = document.getElementById("versionLabel");
-    const etaText = document.getElementById("etaText");
+    const mainInput = document.getElementById("mainInput");
+    const styleInput = document.getElementById("styleInput");
+    const titleInput = document.getElementById("titleInput");
+    const mainCount = document.getElementById("mainCount");
+    const styleCount = document.getElementById("styleCount");
+    const titleCount = document.getElementById("titleCount");
+    const costText = document.getElementById("costText");
+    const costTextSmall = document.getElementById("costTextSmall");
     const balanceText = document.getElementById("balanceText");
-    const sideBalance = document.getElementById("sideBalance");
-    const balanceMeter = document.getElementById("balanceMeter");
-    const generationStatus = document.getElementById("generationStatus");
-    const statusText = document.getElementById("statusText");
-    const progressText = document.getElementById("progressText");
+    const sideCredits = document.getElementById("sideCredits");
+    const progressWrap = document.getElementById("progressWrap");
+    const progressLabel = document.getElementById("progressLabel");
+    const progressValue = document.getElementById("progressValue");
     const progressBar = document.getElementById("progressBar");
-    const results = document.getElementById("results");
+    const resultPanel = document.getElementById("resultPanel");
     const toast = document.getElementById("toast");
-    const sidebar = document.getElementById("sidebar");
 
-    function calculateCredits() {
-      const duration = Number(durationRange.value);
-      const versions = Number(versionRange.value);
-      if (state.mode === "video") {
-        return duration > 60 ? 70 : 40;
-      }
-      const durationExtra = Math.max(0, Math.ceil((duration - 90) / 30)) * 3;
-      const base = modeBase[state.mode];
-      return (base + durationExtra) * versions;
+    function updateCounters() {
+      mainCount.textContent = mainInput.value.length;
+      styleCount.textContent = styleInput.value.length;
+      titleCount.textContent = titleInput.value.length;
     }
 
-    function updateQuote() {
-      const duration = Number(durationRange.value);
-      const versions = Number(versionRange.value);
-      const credits = calculateCredits();
-      durationLabel.textContent = `${duration}s`;
-      versionLabel.textContent = `${versions} 个`;
-      quoteCredits.textContent = credits;
-      quoteType.textContent = modeNames[state.mode];
-      quoteVersions.textContent = state.mode === "video" ? "1 个视频" : `${versions} 个`;
-      quoteDuration.textContent = `${duration} 秒`;
-      etaText.textContent = `约 ${Math.min(140, 30 + duration / 3 + versions * 8).toFixed(0)} 秒`;
+    function updateCost(cost) {
+      state.cost = Number(cost);
+      costText.textContent = state.cost;
+      costTextSmall.textContent = state.cost;
       balanceText.textContent = state.balance;
-      sideBalance.textContent = state.balance;
-      const percent = Math.max(8, Math.min(100, Math.round(state.balance / 600 * 100)));
-      balanceMeter.style.width = `${percent}%`;
+      sideCredits.textContent = state.balance;
     }
 
     function showToast(message) {
@@ -1798,119 +1638,123 @@
       showToast.timer = window.setTimeout(() => toast.classList.remove("active"), 2600);
     }
 
-    function switchView(viewName) {
-      document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
-      document.getElementById(`view-${viewName}`).classList.add("active");
-      document.querySelectorAll(".nav-link").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.view === viewName);
-      });
-      pageTitle.textContent = viewMeta[viewName][0];
-      pageDesc.textContent = viewMeta[viewName][1];
-      sidebar.classList.remove("open");
-    }
-
-    document.querySelectorAll(".nav-link").forEach(btn => {
-      btn.addEventListener("click", () => switchView(btn.dataset.view));
-    });
-
-    document.querySelectorAll("[data-view-jump]").forEach(btn => {
-      btn.addEventListener("click", () => switchView(btn.dataset.viewJump));
-    });
-
-    document.querySelectorAll(".tab").forEach(tab => {
+    document.querySelectorAll(".module-tab").forEach(tab => {
       tab.addEventListener("click", () => {
-        state.mode = tab.dataset.mode;
-        document.querySelectorAll(".tab").forEach(item => item.classList.toggle("active", item === tab));
-        document.querySelectorAll(".mode-panel").forEach(panel => {
-          panel.classList.toggle("active", panel.dataset.modePanel === state.mode);
-        });
-        if (state.mode === "video") {
-          versionRange.value = 1;
-        }
-        updateQuote();
+        document.querySelectorAll(".module-tab").forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        state.module = tab.dataset.module;
+        mainInput.placeholder = tab.dataset.placeholder;
+        updateCost(tab.dataset.cost);
+        const label = tab.textContent.replace("NEW", "").trim();
+        document.getElementById("generateBtn").textContent = state.module === "song" ? "Generate Music" : `Generate ${label}`;
+        showToast(`已切换到 ${label}，本次预计 ${state.cost} credits。`);
       });
     });
 
-    document.querySelectorAll(".prompt-chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        const promptInput = document.getElementById("promptInput");
-        promptInput.value = `${chip.textContent}：一首有清晰 hook 的原创歌曲，适合社交媒体发布，旋律直接，情绪真诚。`;
-        document.querySelectorAll(".prompt-chip").forEach(item => item.classList.remove("active"));
-        chip.classList.add("active");
-        showToast(`已套用模板：${chip.textContent}`);
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".mode-btn").forEach(item => item.classList.remove("active"));
+        btn.classList.add("active");
+        state.mode = btn.dataset.mode;
+        mainInput.placeholder = state.mode === "Prompt to Music"
+          ? "Describe your song idea: scene, mood, genre, voice and usage..."
+          : "Enter lyrics or lyrics prompts here...";
       });
+    });
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
+        item.classList.add("active");
+        showToast(`${item.dataset.nav} 是原型导航入口，当前版本聚焦首页生成器改版。`);
+        document.getElementById("sidebar").classList.remove("open");
+      });
+    });
+
+    document.getElementById("generateLyrics").addEventListener("click", () => {
+      mainInput.value = "[Verse]\n灯光穿过夜色，我们按下新的开始\n让灵感变成旋律，把复杂都交给节拍\n\n[Chorus]\nTurn it up, we launch tonight\nEvery dream becomes a sound";
+      updateCounters();
+      showToast("已生成一段可继续编辑的歌词。");
+    });
+
+    document.getElementById("instrumentalToggle").addEventListener("click", event => {
+      event.currentTarget.classList.toggle("active");
+      showToast(event.currentTarget.classList.contains("active") ? "已开启纯伴奏模式。" : "已关闭纯伴奏模式。");
+    });
+
+    document.getElementById("moreControls").addEventListener("click", () => {
+      const panel = document.getElementById("advancedPanel");
+      panel.classList.toggle("open");
+      document.getElementById("moreArrow").textContent = panel.classList.contains("open") ? "⌃" : "⌄";
     });
 
     document.querySelectorAll("[data-toast]").forEach(btn => {
       btn.addEventListener("click", () => showToast(btn.dataset.toast));
     });
 
-    durationRange.addEventListener("input", updateQuote);
-    versionRange.addEventListener("input", updateQuote);
-
-    document.getElementById("saveDraftBtn").addEventListener("click", () => {
-      showToast("草稿已保存到项目库，不消耗 credits。");
-    });
+    [mainInput, styleInput, titleInput].forEach(input => input.addEventListener("input", updateCounters));
 
     document.getElementById("generateBtn").addEventListener("click", () => {
       if (state.generating) return;
-      const cost = calculateCredits();
-      if (cost > state.balance) {
-        showToast("余额不足，请先升级或购买 credits。");
-        switchView("pricing");
+      if (state.balance < state.cost) {
+        showToast("Credits 不足，请先升级或购买 credits。");
         return;
       }
-      state.generating = true;
-      state.balance -= cost;
-      updateQuote();
-      results.classList.remove("active");
-      generationStatus.classList.add("active");
-      statusText.textContent = "任务排队中";
-      progressText.textContent = "0%";
-      progressBar.style.width = "0%";
 
-      let progress = 0;
+      state.generating = true;
+      state.balance -= state.cost;
+      updateCost(state.cost);
+      resultPanel.classList.remove("active");
+      progressWrap.classList.add("active");
+      progressBar.style.width = "0%";
+      progressValue.textContent = "0%";
+      progressLabel.textContent = "任务排队中";
+
       const steps = [
-        [18, "分析歌词与结构"],
-        [38, "生成旋律与和声"],
-        [62, "渲染人声与编曲"],
-        [84, "写入项目和授权链路"],
+        [18, "分析歌词与风格"],
+        [42, "生成旋律与编曲"],
+        [68, "渲染人声与混音"],
+        [88, "保存项目与授权链路"],
         [100, "生成完成"]
       ];
+      let progress = 0;
       let index = 0;
       const timer = window.setInterval(() => {
         const target = steps[index];
-        progress += Math.max(4, Math.round((target[0] - progress) / 2));
+        progress += Math.max(4, Math.ceil((target[0] - progress) / 2));
         if (progress >= target[0]) {
           progress = target[0];
-          statusText.textContent = target[1];
+          progressLabel.textContent = target[1];
           index += 1;
         }
-        progressText.textContent = `${progress}%`;
         progressBar.style.width = `${progress}%`;
+        progressValue.textContent = `${progress}%`;
         if (progress >= 100) {
           window.clearInterval(timer);
           state.generating = false;
           window.setTimeout(() => {
-            generationStatus.classList.remove("active");
-            results.classList.add("active");
-            showToast("生成完成：项目、扣费和授权记录已保存。");
+            progressWrap.classList.remove("active");
+            resultPanel.classList.add("active");
+            const title = titleInput.value.trim() || "Midnight Launch";
+            document.getElementById("songTitleA").textContent = `${title} A`;
+            showToast("生成完成：歌曲、扣费和授权记录已保存。");
           }, 500);
         }
-      }, 420);
+      }, 360);
     });
 
-    document.getElementById("menuBtn").addEventListener("click", () => {
-      sidebar.classList.toggle("open");
+    document.getElementById("mobileMenu").addEventListener("click", () => {
+      document.getElementById("sidebar").classList.toggle("open");
     });
 
     document.addEventListener("keydown", event => {
       if (event.key === "Escape") {
-        sidebar.classList.remove("open");
+        document.getElementById("sidebar").classList.remove("open");
       }
     });
 
-    updateQuote();
+    updateCounters();
+    updateCost(state.cost);
   </script>
 </body>
 </html>
