@@ -7,7 +7,6 @@
   <style>
     :root {
       --bg: #050507;
-      --bg-2: #090b12;
       --sidebar: #030405;
       --panel: #111827;
       --panel-2: #151d2d;
@@ -83,7 +82,8 @@
     }
 
     textarea,
-    input {
+    input,
+    select {
       color: var(--text);
       background: transparent;
     }
@@ -105,6 +105,7 @@
       flex-direction: column;
       gap: 16px;
       z-index: 20;
+      overflow-y: auto;
     }
 
     .brand {
@@ -354,6 +355,20 @@
       justify-content: center;
     }
 
+    .view {
+      display: none;
+      animation: fadeIn 180ms ease;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .hero {
       max-width: 1050px;
       margin: 0 auto;
@@ -362,7 +377,8 @@
       position: relative;
     }
 
-    .hero h1 {
+    .hero h1,
+    .tool-hero h1 {
       margin: 0;
       font-size: clamp(46px, 6vw, 76px);
       line-height: 1;
@@ -374,8 +390,9 @@
       text-shadow: 0 0 42px rgba(255, 67, 168, 0.16);
     }
 
-    .hero p {
-      max-width: 720px;
+    .hero p,
+    .tool-hero p {
+      max-width: 760px;
       margin: 16px auto 0;
       color: #b5bdd0;
       line-height: 1.7;
@@ -447,24 +464,34 @@
       font-weight: 950;
     }
 
-    .generator-wrap {
-      max-width: 826px;
+    .generator-wrap,
+    .tool-wrap {
+      max-width: 1120px;
       margin: 0 auto;
     }
 
-    .generator-card {
+    .generator-card,
+    .tool-card,
+    .content-card,
+    .plan-card {
       border-radius: 18px;
       background:
         radial-gradient(circle at 20% 0%, rgba(100, 108, 255, 0.12), transparent 21rem),
         linear-gradient(180deg, rgba(21, 28, 45, 0.96), rgba(13, 19, 31, 0.98));
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow: var(--shadow);
-      padding: 32px;
       position: relative;
       overflow: hidden;
     }
 
-    .generator-card::before {
+    .generator-card {
+      max-width: 826px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    .generator-card::before,
+    .tool-card::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -473,7 +500,8 @@
       opacity: 0.6;
     }
 
-    .generator-inner {
+    .generator-inner,
+    .tool-inner {
       position: relative;
       z-index: 1;
       display: grid;
@@ -561,7 +589,8 @@
     }
 
     .field-block textarea::placeholder,
-    .soft-input::placeholder {
+    .soft-input::placeholder,
+    .control-input::placeholder {
       color: #8d96a9;
     }
 
@@ -699,8 +728,9 @@
     }
 
     .quick-tags span,
+    .quick-tags button,
     .new-label {
-      height: 22px;
+      min-height: 22px;
       border-radius: 5px;
       padding: 0 8px;
       display: inline-flex;
@@ -709,6 +739,11 @@
       background: rgba(255,255,255,0.075);
       font-size: 12px;
       font-weight: 800;
+    }
+
+    .quick-tags button:hover {
+      color: #fff;
+      background: rgba(168,85,247,0.34);
     }
 
     .more-controls {
@@ -720,6 +755,7 @@
       font-weight: 900;
       padding: 0;
       min-height: 34px;
+      justify-self: start;
     }
 
     .new-label {
@@ -739,25 +775,37 @@
       display: grid;
     }
 
-    .mini-field {
+    .mini-field,
+    .control-field {
       display: grid;
       gap: 7px;
     }
 
-    .mini-field label {
+    .mini-field label,
+    .control-field label {
       color: #b5bfd2;
       font-size: 12px;
       font-weight: 850;
     }
 
-    .mini-field select {
-      height: 40px;
+    .mini-field select,
+    .control-field select,
+    .control-input {
+      height: 42px;
       border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.1);
       background: #111827;
       color: #e8edf8;
       padding: 0 10px;
       outline: 0;
+    }
+
+    .control-field textarea.control-input {
+      height: auto;
+      min-height: 110px;
+      padding: 13px;
+      resize: vertical;
+      line-height: 1.55;
     }
 
     .title-row {
@@ -822,7 +870,8 @@
       color: #fff;
     }
 
-    .generate {
+    .generate,
+    .primary-btn {
       min-height: 56px;
       border-radius: 8px;
       color: #fff;
@@ -836,7 +885,8 @@
       overflow: hidden;
     }
 
-    .generate::after {
+    .generate::after,
+    .primary-btn::after {
       content: "";
       position: absolute;
       inset: 0;
@@ -845,7 +895,8 @@
       transition: transform 520ms ease;
     }
 
-    .generate:hover::after {
+    .generate:hover::after,
+    .primary-btn:hover::after {
       transform: translateX(120%);
     }
 
@@ -906,7 +957,10 @@
     }
 
     .song-card,
-    .license-card {
+    .license-card,
+    .sample-card,
+    .output-card,
+    .faq-card {
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.08);
       background: rgba(15, 23, 42, 0.84);
@@ -928,6 +982,12 @@
       background:
         radial-gradient(circle at 65% 25%, rgba(255,255,255,0.32), transparent 5rem),
         linear-gradient(135deg, #1d4ed8 0%, #7c3aed 50%, #ff43a8 100%);
+    }
+
+    .cover.green {
+      background:
+        radial-gradient(circle at 70% 20%, rgba(255,255,255,0.28), transparent 5rem),
+        linear-gradient(135deg, #0f766e, #1d4ed8 52%, #a855f7);
     }
 
     .wave {
@@ -956,18 +1016,29 @@
     }
 
     .song-body,
-    .license-card {
+    .license-card,
+    .sample-body,
+    .output-card,
+    .faq-card {
       padding: 16px;
     }
 
     .song-body h3,
-    .license-card h3 {
+    .license-card h3,
+    .sample-body h3,
+    .output-card h3,
+    .faq-card h3,
+    .content-card h3 {
       margin: 0 0 7px;
       font-size: 16px;
     }
 
     .song-body p,
-    .license-card p {
+    .license-card p,
+    .sample-body p,
+    .output-card p,
+    .faq-card p,
+    .content-card p {
       margin: 0;
       color: var(--muted);
       font-size: 13px;
@@ -1028,11 +1099,13 @@
       font-weight: 950;
     }
 
-    .below {
+    .below,
+    .sample-grid,
+    .faq-grid {
       max-width: 1120px;
       margin: 48px auto 0;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
     }
 
@@ -1053,6 +1126,349 @@
       color: var(--muted);
       font-size: 13px;
       line-height: 1.6;
+    }
+
+    .tool-hero {
+      max-width: 980px;
+      margin: 0 auto 26px;
+      padding-top: 10px;
+      text-align: center;
+    }
+
+    .tool-hero h1 {
+      font-size: clamp(40px, 5.3vw, 68px);
+    }
+
+    .tool-card {
+      padding: 26px;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) 340px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .input-panel,
+    .settings-panel {
+      display: grid;
+      gap: 15px;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .panel-title span {
+      color: #c878ff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .upload-box {
+      min-height: 188px;
+      border: 1px dashed rgba(91,160,255,0.72);
+      border-radius: 14px;
+      background: rgba(9, 17, 31, 0.72);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+      box-shadow: inset 0 0 24px rgba(91,160,255,0.08);
+    }
+
+    .upload-box strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 16px;
+    }
+
+    .upload-box p {
+      max-width: 420px;
+      color: var(--muted);
+      margin: 8px auto 0;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .upload-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #7c3aed, #ff43a8);
+      box-shadow: var(--glow);
+      font-size: 24px;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .setting-card {
+      border-radius: 14px;
+      background: rgba(14, 24, 40, 0.74);
+      border: 1px solid rgba(255,255,255,0.075);
+      padding: 15px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .setting-card h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .ratio-options,
+    .template-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .option-chip {
+      min-height: 38px;
+      border-radius: 8px;
+      padding: 0 10px;
+      display: grid;
+      place-items: center;
+      color: #b9c3d5;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .option-chip.active,
+    .option-chip:hover {
+      color: #fff;
+      border-color: rgba(255,67,168,0.58);
+      background: rgba(168,85,247,0.28);
+    }
+
+    .quote-box {
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(33, 42, 61, 0.95), rgba(14, 21, 34, 0.95));
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 15px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .quote-box .big {
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 950;
+      color: #fff;
+    }
+
+    .quote-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #aeb7c8;
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 10px;
+    }
+
+    .quote-line strong {
+      color: #fff;
+    }
+
+    .result-zone {
+      display: none;
+      margin-top: 18px;
+    }
+
+    .result-zone.active {
+      display: block;
+    }
+
+    .outputs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .output-visual {
+      height: 138px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,0.9);
+      background:
+        linear-gradient(135deg, rgba(124,58,237,0.86), rgba(255,67,168,0.82)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.16) 0 4px, transparent 4px 10px);
+      overflow: hidden;
+    }
+
+    .output-visual.photo {
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.42), transparent 5rem),
+        linear-gradient(135deg, #155e75, #7c3aed, #ff43a8);
+    }
+
+    .output-visual.video {
+      aspect-ratio: 9 / 12;
+      height: 220px;
+      margin-inline: auto;
+      width: min(150px, 100%);
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,0.32), transparent 4rem),
+        linear-gradient(180deg, #1d4ed8, #7c3aed 46%, #ff43a8);
+    }
+
+    .output-visual.stem {
+      background:
+        linear-gradient(135deg, #0f766e, #1e40af),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.2) 0 4px, transparent 4px 10px);
+    }
+
+    .section-head {
+      max-width: 1120px;
+      margin: 44px auto 16px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .sample-grid {
+      margin-top: 0;
+    }
+
+    .sample-card {
+      min-height: 230px;
+    }
+
+    .sample-art {
+      height: 128px;
+      background: linear-gradient(135deg, #7c3aed, #ff43a8 46%, #f6c247);
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .sample-art.alt {
+      background: linear-gradient(135deg, #155e75, #1d4ed8, #a855f7);
+    }
+
+    .sample-art.soft {
+      background: linear-gradient(135deg, #2f1d78, #d946ef, #fb7185);
+    }
+
+    .pricing-grid {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .plan-card {
+      padding: 20px;
+      min-height: 390px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .plan-card.featured {
+      border-color: rgba(255,67,168,0.52);
+      box-shadow: 0 22px 60px rgba(255,67,168,0.17);
+    }
+
+    .plan-card h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .price {
+      margin: 14px 0 6px;
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .price small {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .plan-card p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .plan-card ul {
+      padding: 0;
+      margin: 18px 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      color: #c8d1e2;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .plan-card li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .plan-card .small-btn,
+    .plan-card .primary-btn {
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .contact-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .content-card {
+      padding: 22px;
+    }
+
+    .content-card form {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
     }
 
     .toast {
@@ -1134,6 +1550,14 @@
       .account .select-pill {
         display: none;
       }
+
+      .tool-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 900px) {
@@ -1210,7 +1634,8 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
-      .generator-card {
+      .generator-card,
+      .tool-card {
         padding: 22px;
       }
 
@@ -1230,7 +1655,12 @@
       .cost-strip,
       .below,
       .result-panel,
-      .advanced {
+      .advanced,
+      .control-grid,
+      .outputs,
+      .sample-grid,
+      .faq-grid,
+      .contact-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1240,8 +1670,9 @@
         padding-inline: 12px;
       }
 
-      .hero h1 {
-        font-size: 42px;
+      .hero h1,
+      .tool-hero h1 {
+        font-size: 40px;
       }
 
       .account .sign-in {
@@ -1258,12 +1689,17 @@
       }
 
       .field-footer,
-      .style-head {
+      .style-head,
+      .section-head {
         align-items: flex-start;
         flex-direction: column;
       }
 
       .title-row {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1281,6 +1717,7 @@
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"></path><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16z"></path></symbol>
     <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3c3 3.3 3 14.7 0 18"></path><path d="M12 3c-3 3.3-3 14.7 0 18"></path></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="M4 7l8 6 8-6"></path></symbol>
   </svg>
 
   <div class="shell">
@@ -1292,11 +1729,11 @@
       </div>
 
       <div class="nav-section">
-        <button class="nav-item active" data-nav="Home">
+        <button class="nav-item active" data-page="home">
           <svg class="icon"><use href="#i-home"></use></svg>
           <span>Home</span>
         </button>
-        <button class="nav-item" data-nav="Create Song">
+        <button class="nav-item" data-page="create-song">
           <svg class="icon"><use href="#i-music"></use></svg>
           <span>Create Song</span>
         </button>
@@ -1304,47 +1741,56 @@
 
       <div class="nav-section">
         <div class="nav-title">Video & Photo</div>
-        <button class="nav-item" data-nav="Music Video">
+        <button class="nav-item" data-page="music-video">
           <svg class="icon"><use href="#i-video"></use></svg>
           <span>Music Video</span>
         </button>
-        <button class="nav-item" data-nav="Singing Video">
+        <button class="nav-item" data-page="singing-video">
           <svg class="icon"><use href="#i-video"></use></svg>
           <span>Singing Video</span>
         </button>
-        <button class="nav-item" data-nav="Create Photo">
+        <button class="nav-item" data-page="create-photo">
           <svg class="icon"><use href="#i-image"></use></svg>
           <span>Create Photo</span>
         </button>
-        <button class="nav-item" data-nav="AI Dancing Video">
+        <button class="nav-item" data-page="dancing-video">
           <svg class="icon"><use href="#i-dance"></use></svg>
           <span>AI Dancing Video</span>
           <small class="badge">New</small>
         </button>
-        <button class="nav-item" data-nav="Lyrics Video">
+        <button class="nav-item" data-page="lyrics-video">
           <svg class="icon"><use href="#i-doc"></use></svg>
           <span>Lyrics Video</span>
+          <small class="badge">New</small>
+        </button>
+        <button class="nav-item" data-page="seedance">
+          <svg class="icon"><use href="#i-video"></use></svg>
+          <span>Seedance 2.0</span>
           <small class="badge">New</small>
         </button>
       </div>
 
       <div class="nav-section">
         <div class="nav-title">Music Tools</div>
-        <button class="nav-item" data-nav="Stem Splitter">
+        <button class="nav-item" data-page="stem-splitter">
           <svg class="icon"><use href="#i-cut"></use></svg>
           <span>Stem Splitter</span>
         </button>
-        <button class="nav-item" data-nav="Vocal Remover">
+        <button class="nav-item" data-page="vocal-remover">
           <svg class="icon"><use href="#i-cut"></use></svg>
           <span>Vocal Remover</span>
         </button>
-        <button class="nav-item" data-nav="Music Prompt">
+        <button class="nav-item" data-page="music-prompt">
           <svg class="icon"><use href="#i-doc"></use></svg>
           <span>Music Prompt</span>
         </button>
-        <button class="nav-item" data-nav="Pricing">
+        <button class="nav-item" data-page="pricing">
           <span style="font-size:22px;line-height:1">$</span>
           <span>Pricing</span>
+        </button>
+        <button class="nav-item" data-page="contact">
+          <svg class="icon"><use href="#i-mail"></use></svg>
+          <span>Contact</span>
         </button>
       </div>
 
@@ -1363,18 +1809,18 @@
           <svg class="icon"><use href="#i-menu"></use></svg>
         </button>
 
-        <div class="top-logo">
+        <button class="top-logo" data-page-jump="home">
           <span>♫</span>
           <span>SongPilot</span>
           <small>AI</small>
-        </div>
+        </button>
 
         <nav class="top-nav" aria-label="顶部导航">
-          <button class="active">Create Song</button>
-          <button>Music Video</button>
-          <button class="has-dot">Image Gen</button>
-          <button>Pricing</button>
-          <button>Contact</button>
+          <button class="active" data-page-jump="create-song">Create Song</button>
+          <button data-page-jump="music-video">Music Video</button>
+          <button class="has-dot" data-page-jump="create-photo">Image Gen</button>
+          <button data-page-jump="pricing">Pricing</button>
+          <button data-page-jump="contact">Contact</button>
         </nav>
 
         <div class="account">
@@ -1382,209 +1828,399 @@
             <svg class="icon"><use href="#i-globe"></use></svg>
             English
           </button>
-          <button class="sign-in">Sign In</button>
+          <button class="sign-in" data-toast="登录后可保存项目、下载授权和同步 credits。">Sign In</button>
         </div>
       </header>
 
-      <section class="hero">
-        <span class="floating-note note-a">♫</span>
-        <span class="floating-note note-b">♪</span>
-        <span class="floating-note note-c">♬</span>
-        <span class="floating-note note-d">♪</span>
-        <h1>AI Song & Video Generator</h1>
-        <p>用歌词、prompt 或模板快速生成歌曲，并在同一个项目里继续生成封面、歌词视频和商用授权凭证。</p>
+      <section class="view active" id="view-home">
+        <div class="hero">
+          <span class="floating-note note-a">♫</span>
+          <span class="floating-note note-b">♪</span>
+          <span class="floating-note note-c">♬</span>
+          <span class="floating-note note-d">♪</span>
+          <h1>AI Song & Video Generator</h1>
+          <p>用歌词、prompt 或模板快速生成歌曲，并在同一个项目里继续生成封面、歌词视频和商用授权凭证。</p>
+        </div>
+
+        <section class="module-tabs" aria-label="功能切换">
+          <button class="module-tab active" data-page-jump="create-song">
+            <svg class="icon"><use href="#i-spark"></use></svg>
+            AI Song Generator
+          </button>
+          <button class="module-tab" data-page-jump="music-video">
+            <svg class="icon"><use href="#i-video"></use></svg>
+            AI Music Video
+            <span class="new">NEW</span>
+          </button>
+          <button class="module-tab" data-page-jump="singing-video">
+            <svg class="icon"><use href="#i-music"></use></svg>
+            AI Singing Video
+            <span class="new">NEW</span>
+          </button>
+          <button class="module-tab" data-page-jump="lyrics-video">
+            <svg class="icon"><use href="#i-doc"></use></svg>
+            Lyric Video
+            <span class="new">NEW</span>
+          </button>
+          <button class="module-tab" data-page-jump="dancing-video">
+            <svg class="icon"><use href="#i-dance"></use></svg>
+            AI Dance
+            <span class="new">NEW</span>
+          </button>
+          <button class="module-tab" data-page-jump="seedance">
+            <svg class="icon"><use href="#i-video"></use></svg>
+            Seedance 2.0
+            <span class="new">NEW</span>
+          </button>
+        </section>
+
+        <section class="generator-wrap">
+          <div class="generator-card">
+            <div class="generator-inner">
+              <div class="mode-row">
+                <div class="segmented">
+                  <button class="mode-btn active" data-mode="Lyric to Music">Lyric to Music</button>
+                  <button class="mode-btn" data-mode="Prompt to Music">Prompt to Music</button>
+                </div>
+                <button class="model-select">
+                  <span>V5</span>
+                  <span class="mini-new">NEW</span>
+                  <span>⌄</span>
+                </button>
+              </div>
+
+              <div class="field-block">
+                <textarea id="mainInput" maxlength="5000" placeholder="Enter lyrics or lyrics prompts here..."></textarea>
+                <div class="field-footer">
+                  <button class="ghost-pill" id="generateLyrics">
+                    <svg class="icon"><use href="#i-spark"></use></svg>
+                    lyrics generate ✨
+                  </button>
+                  <span class="counter"><span id="mainCount">0</span>/5000</span>
+                </div>
+              </div>
+
+              <div class="style-card">
+                <div class="style-head">
+                  <label for="styleInput">Styles</label>
+                  <button class="toggle" id="instrumentalToggle">
+                    <span class="switch"><i></i></span>
+                    Instrumental
+                  </button>
+                </div>
+                <div class="soft-input-wrap">
+                  <textarea class="soft-input" id="styleInput" maxlength="1000" placeholder="Enter styles: Pop, Rock, Jazz, Classical, Women voice..."></textarea>
+                  <button class="spark-btn" title="智能补全">
+                    <svg class="icon"><use href="#i-spark"></use></svg>
+                  </button>
+                </div>
+                <div class="field-footer" style="padding: 0;">
+                  <div class="quick-tags">
+                    <span># Style</span>
+                    <span># Moods</span>
+                    <span># Voices</span>
+                    <span># Tempos</span>
+                  </div>
+                  <span class="counter"><span id="styleCount">0</span>/1000</span>
+                </div>
+                <button class="more-controls" id="moreControls">
+                  <span class="new-label">New</span>
+                  More Controls
+                  <span id="moreArrow">⌄</span>
+                </button>
+                <div class="advanced" id="advancedPanel">
+                  <div class="mini-field">
+                    <label>Language</label>
+                    <select>
+                      <option>Auto</option>
+                      <option>Chinese</option>
+                      <option>English</option>
+                      <option>Japanese</option>
+                    </select>
+                  </div>
+                  <div class="mini-field">
+                    <label>Duration</label>
+                    <select>
+                      <option>60 seconds</option>
+                      <option selected>90 seconds</option>
+                      <option>120 seconds</option>
+                    </select>
+                  </div>
+                  <div class="mini-field">
+                    <label>Privacy</label>
+                    <select>
+                      <option>Private Project</option>
+                      <option>Public Showcase</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="title-row">
+                <label>Title<span>*</span></label>
+                <div class="title-input">
+                  <input id="titleInput" maxlength="30" placeholder="Enter a memorable title for your song">
+                  <span class="counter"><span id="titleCount">0</span>/30</span>
+                </div>
+              </div>
+
+              <div class="cost-strip">
+                <div class="cost-item">
+                  <span>生成前报价</span>
+                  <strong>3 credits</strong>
+                </div>
+                <div class="cost-item">
+                  <span>余额</span>
+                  <strong><span class="balanceText">343</span> credits</strong>
+                </div>
+                <div class="cost-item">
+                  <span>保障</span>
+                  <strong>失败自动返还</strong>
+                </div>
+              </div>
+
+              <button class="generate run-btn" data-cost="3" data-target="homeResult" data-label="Generate Music">Generate Music</button>
+              <p class="generate-note">Generating once costs 3 credits · 商用下载会生成 License Card</p>
+
+              <div class="progress-wrap" data-progress-for="homeResult">
+                <div class="progress-head">
+                  <span>任务排队中</span>
+                  <span>0%</span>
+                </div>
+                <div class="progress-track"><i></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-panel" id="homeResult">
+            <article class="song-card">
+              <div class="cover">
+                <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <div class="song-body">
+                <h3>Midnight Launch A</h3>
+                <p>V5 · Pop Electronic · 90s · 已保存到项目库</p>
+                <div class="song-actions">
+                  <button class="small-btn primary" data-toast="正在播放试听片段">Play</button>
+                  <button class="small-btn" data-toast="已导出 MP3，并写入下载记录">MP3</button>
+                  <button class="small-btn" data-page-jump="lyrics-video">Lyric Video</button>
+                </div>
+              </div>
+            </article>
+            <article class="license-card">
+              <h3>License Ready</h3>
+              <p>每个商用资产都绑定项目、模型版本、生成时间和 prompt hash，避免授权不透明问题。</p>
+              <ul class="license-list">
+                <li><span class="check">✓</span><span>付费生成可下载授权凭证</span></li>
+                <li><span class="check">✓</span><span>任务失败自动返还 credits</span></li>
+                <li><span class="check">✓</span><span>歌曲、封面、视频归入同一项目链路</span></li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="below">
+          <article class="info-card">
+            <h3>像 MakeSong 一样低门槛</h3>
+            <p>核心生成器前置，用户进入页面就能输入歌词或 prompt，不需要先理解复杂工作台。</p>
+          </article>
+          <article class="info-card">
+            <h3>比 credits 黑箱更透明</h3>
+            <p>每次点击生成前显示消耗、余额和失败返还规则，所有记录进入 Credits 明细。</p>
+          </article>
+          <article class="info-card">
+            <h3>面向发布闭环</h3>
+            <p>歌曲之后继续生成封面、歌词视频和授权凭证，适合短视频和商业内容生产。</p>
+          </article>
+        </section>
       </section>
 
-      <section class="module-tabs" aria-label="功能切换">
-        <button class="module-tab active" data-module="song" data-cost="3" data-placeholder="Enter lyrics or lyrics prompts here...">
-          <svg class="icon"><use href="#i-spark"></use></svg>
-          AI Song Generator
-        </button>
-        <button class="module-tab" data-module="music-video" data-cost="48" data-placeholder="Describe the visual mood, scenes, camera movement and platform ratio...">
-          <svg class="icon"><use href="#i-video"></use></svg>
-          AI Music Video
-          <span class="new">NEW</span>
-        </button>
-        <button class="module-tab" data-module="singing" data-cost="36" data-placeholder="Upload or describe a portrait, then add lyrics for lip-sync singing...">
-          <svg class="icon"><use href="#i-music"></use></svg>
-          AI Singing Video
-          <span class="new">NEW</span>
-        </button>
-        <button class="module-tab" data-module="lyric-video" data-cost="18" data-placeholder="Paste lyrics and choose subtitle animation, cover style and timing...">
-          <svg class="icon"><use href="#i-doc"></use></svg>
-          Lyric Video
-          <span class="new">NEW</span>
-        </button>
-        <button class="module-tab" data-module="dance" data-cost="52" data-placeholder="Describe dance style, character, outfit and rhythm matching...">
-          <svg class="icon"><use href="#i-dance"></use></svg>
-          AI Dance
-          <span class="new">NEW</span>
-        </button>
-        <button class="module-tab" data-module="seedance" data-cost="50" data-placeholder="Create a cinematic motion video from text, image or audio direction...">
-          <svg class="icon"><use href="#i-video"></use></svg>
-          Seedance 2.0
-          <span class="new">NEW</span>
-        </button>
-      </section>
-
-      <section class="generator-wrap">
-        <div class="generator-card">
-          <div class="generator-inner">
-            <div class="mode-row">
-              <div class="segmented">
-                <button class="mode-btn active" data-mode="Lyric to Music">Lyric to Music</button>
-                <button class="mode-btn" data-mode="Prompt to Music">Prompt to Music</button>
-              </div>
-              <button class="model-select" id="modelBtn">
-                <span>V5</span>
-                <span class="mini-new">NEW</span>
-                <span>⌄</span>
-              </button>
-            </div>
-
-            <div class="field-block">
-              <textarea id="mainInput" maxlength="5000" placeholder="Enter lyrics or lyrics prompts here..."></textarea>
-              <div class="field-footer">
-                <button class="ghost-pill" id="generateLyrics">
-                  <svg class="icon"><use href="#i-spark"></use></svg>
-                  lyrics generate ✨
-                </button>
-                <span class="counter"><span id="mainCount">0</span>/5000</span>
-              </div>
-            </div>
-
-            <div class="style-card">
-              <div class="style-head">
-                <label for="styleInput">Styles</label>
-                <button class="toggle" id="instrumentalToggle">
-                  <span class="switch"><i></i></span>
-                  Instrumental
-                </button>
-              </div>
-              <div class="soft-input-wrap">
-                <textarea class="soft-input" id="styleInput" maxlength="1000" placeholder="Enter styles: Pop, Rock, Jazz, Classical, Women voice..."></textarea>
-                <button class="spark-btn" title="智能补全">
-                  <svg class="icon"><use href="#i-spark"></use></svg>
-                </button>
-              </div>
-              <div class="field-footer" style="padding: 0;">
-                <div class="quick-tags">
-                  <span># Style</span>
-                  <span># Moods</span>
-                  <span># Voices</span>
-                  <span># Tempos</span>
+      <section class="view" id="view-create-song">
+        <div class="tool-hero">
+          <h1>AI Song Generator</h1>
+          <p>参考 MakeSong 的 Lyric to Music / Prompt to Music 双模式，但加入生成前报价、项目版本和商用授权链路。</p>
+        </div>
+        <div class="tool-wrap">
+          <div class="tool-card">
+            <div class="tool-inner tool-grid">
+              <div class="input-panel">
+                <div class="panel-title">
+                  <h2>Create Song</h2>
+                  <span>V5 · 3 credits</span>
                 </div>
-                <span class="counter"><span id="styleCount">0</span>/1000</span>
-              </div>
-              <button class="more-controls" id="moreControls">
-                <span class="new-label">New</span>
-                More Controls
-                <span id="moreArrow">⌄</span>
-              </button>
-              <div class="advanced" id="advancedPanel">
-                <div class="mini-field">
-                  <label>Language</label>
-                  <select>
-                    <option>Auto</option>
-                    <option>Chinese</option>
-                    <option>English</option>
-                    <option>Japanese</option>
-                  </select>
+                <div class="field-block">
+                  <textarea class="counted" maxlength="5000" placeholder="Paste lyrics, write a theme, or describe the song you want..."></textarea>
+                  <div class="field-footer">
+                    <button class="ghost-pill fill-demo">Generate lyrics ✨</button>
+                    <span class="counter"><span>0</span>/5000</span>
+                  </div>
                 </div>
-                <div class="mini-field">
-                  <label>Duration</label>
-                  <select id="durationSelect">
-                    <option value="60">60 seconds</option>
-                    <option value="90" selected>90 seconds</option>
-                    <option value="120">120 seconds</option>
-                  </select>
+                <div class="control-grid">
+                  <div class="control-field">
+                    <label>Title</label>
+                    <input class="control-input" placeholder="Song title">
+                  </div>
+                  <div class="control-field">
+                    <label>Style</label>
+                    <input class="control-input" placeholder="Pop, EDM, female vocal">
+                  </div>
                 </div>
-                <div class="mini-field">
-                  <label>Privacy</label>
-                  <select>
-                    <option>Private Project</option>
-                    <option>Public Showcase</option>
-                  </select>
+                <div class="result-zone" id="songResult">
+                  <div class="outputs">
+                    <div class="output-card">
+                      <div class="output-visual"><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+                      <h3>Song Version A</h3>
+                      <p>可播放、下载 MP3/WAV，并继续生成歌词视频。</p>
+                    </div>
+                    <div class="output-card">
+                      <div class="output-visual photo"></div>
+                      <h3>Auto Cover</h3>
+                      <p>根据歌曲主题自动生成封面草稿。</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="title-row">
-              <label>Title<span>*</span></label>
-              <div class="title-input">
-                <input id="titleInput" maxlength="30" placeholder="Enter a memorable title for your song">
-                <span class="counter"><span id="titleCount">0</span>/30</span>
-              </div>
-            </div>
-
-            <div class="cost-strip">
-              <div class="cost-item">
-                <span>生成前报价</span>
-                <strong><span id="costText">3</span> credits</strong>
-              </div>
-              <div class="cost-item">
-                <span>余额</span>
-                <strong><span id="balanceText">343</span> credits</strong>
-              </div>
-              <div class="cost-item">
-                <span>保障</span>
-                <strong>失败自动返还</strong>
-              </div>
-            </div>
-
-            <button class="generate" id="generateBtn">Generate Music</button>
-            <p class="generate-note">Generating once costs <span id="costTextSmall">3</span> credits · 商用下载会生成 License Card</p>
-
-            <div class="progress-wrap" id="progressWrap">
-              <div class="progress-head">
-                <span id="progressLabel">任务排队中</span>
-                <span id="progressValue">0%</span>
-              </div>
-              <div class="progress-track"><i id="progressBar"></i></div>
+              <aside class="settings-panel">
+                <div class="setting-card">
+                  <h3>Controls</h3>
+                  <div class="control-field">
+                    <label>Mode</label>
+                    <select><option>Lyric to Music</option><option>Prompt to Music</option><option>Instrumental</option></select>
+                  </div>
+                  <div class="control-grid">
+                    <div class="control-field"><label>Voice</label><select><option>Auto</option><option>Female</option><option>Male</option><option>Duet</option></select></div>
+                    <div class="control-field"><label>Duration</label><select><option>60s</option><option selected>90s</option><option>120s</option></select></div>
+                  </div>
+                  <div class="ratio-options"><button class="option-chip active">Private</button><button class="option-chip">Public</button><button class="option-chip">Team</button></div>
+                </div>
+                <div class="quote-box">
+                  <span>Estimated cost</span>
+                  <div class="big">3</div>
+                  <div class="quote-line"><span>Balance</span><strong><span class="balanceText">343</span></strong></div>
+                  <div class="quote-line"><span>Failure refund</span><strong>100%</strong></div>
+                  <button class="primary-btn run-btn" data-cost="3" data-target="songResult">Generate Music</button>
+                </div>
+              </aside>
             </div>
           </div>
         </div>
-
-        <div class="result-panel" id="resultPanel">
-          <article class="song-card">
-            <div class="cover">
-              <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            </div>
-            <div class="song-body">
-              <h3 id="songTitleA">Midnight Launch A</h3>
-              <p>V5 · Pop Electronic · 90s · 已保存到项目库</p>
-              <div class="song-actions">
-                <button class="small-btn primary" data-toast="正在播放试听片段">Play</button>
-                <button class="small-btn" data-toast="已导出 MP3，并写入下载记录">MP3</button>
-                <button class="small-btn" data-toast="已进入歌词视频生成流程">Lyric Video</button>
-              </div>
-            </div>
-          </article>
-          <article class="license-card">
-            <h3>License Ready</h3>
-            <p>每个商用资产都绑定项目、模型版本、生成时间和 prompt hash，避免 MakeSong 类产品常见的授权不透明问题。</p>
-            <ul class="license-list">
-              <li><span class="check">✓</span><span>付费生成可下载授权凭证</span></li>
-              <li><span class="check">✓</span><span>任务失败自动返还 credits</span></li>
-              <li><span class="check">✓</span><span>歌曲、封面、视频归入同一项目链路</span></li>
-            </ul>
-          </article>
+        <div class="section-head"><div><h2>Song Templates</h2><p>把 MakeSong 的宽入口做成更明确的场景模板。</p></div></div>
+        <div class="sample-grid">
+          <article class="sample-card"><div class="sample-art">♪</div><div class="sample-body"><h3>Product Launch</h3><p>科技发布、品牌短片、产品演示。</p></div></article>
+          <article class="sample-card"><div class="sample-art alt">♫</div><div class="sample-body"><h3>Podcast Intro</h3><p>栏目片头、频道品牌音乐。</p></div></article>
+          <article class="sample-card"><div class="sample-art soft">♬</div><div class="sample-body"><h3>Game Theme</h3><p>菜单、战斗、角色主题曲。</p></div></article>
         </div>
       </section>
 
-      <section class="below">
-        <article class="info-card">
-          <h3>像 MakeSong 一样低门槛</h3>
-          <p>核心生成器前置，用户进入页面就能输入歌词或 prompt，不需要先理解复杂工作台。</p>
-        </article>
-        <article class="info-card">
-          <h3>比 credits 黑箱更透明</h3>
-          <p>每次点击生成前显示消耗、余额和失败返还规则，所有记录进入 Credits 明细。</p>
-        </article>
-        <article class="info-card">
-          <h3>面向发布闭环</h3>
-          <p>歌曲之后继续生成封面、歌词视频和授权凭证，适合短视频和商业内容生产。</p>
-        </article>
+      <section class="view" id="view-music-video">
+        <div class="tool-hero"><h1>AI Music Video</h1><p>上传歌曲或选择项目，输入视频风格，生成适合 TikTok、Shorts、MV 预告片的音乐视频。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel">
+            <div class="panel-title"><h2>Upload Audio</h2><span>48 credits</span></div>
+            <div class="upload-box"><div><div class="upload-icon">↥</div><strong>Drop audio or select SongPilot project</strong><p>支持 MP3/WAV，或从已生成歌曲中选择一个版本作为视频配乐。</p></div></div>
+            <div class="control-field"><label>Video Prompt</label><textarea class="control-input counted" maxlength="1200" placeholder="Describe scene, camera, color mood and transitions..."></textarea></div>
+            <div class="result-zone" id="musicVideoResult"><div class="outputs"><div class="output-card"><div class="output-visual video">MP4</div><h3>Music Video Draft</h3><p>9:16 竖版视频，含节拍同步和封面镜头。</p></div><div class="output-card"><div class="output-visual">Scenes</div><h3>Scene Timeline</h3><p>自动拆分 6 个镜头，可继续二次编辑。</p></div></div></div>
+          </div>
+          <aside class="settings-panel">
+            <div class="setting-card"><h3>Video Settings</h3><div class="ratio-options"><button class="option-chip active">9:16</button><button class="option-chip">1:1</button><button class="option-chip">16:9</button></div><div class="control-grid"><div class="control-field"><label>Quality</label><select><option>720p</option><option>1080p</option></select></div><div class="control-field"><label>Length</label><select><option>30s</option><option selected>60s</option></select></div></div></div>
+            <div class="quote-box"><span>Estimated cost</span><div class="big">48</div><div class="quote-line"><span>Includes</span><strong>MP4 + License</strong></div><div class="quote-line"><span>Refund</span><strong>On render failure</strong></div><button class="primary-btn run-btn" data-cost="48" data-target="musicVideoResult">Generate Video</button></div>
+          </aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-singing-video">
+        <div class="tool-hero"><h1>AI Singing Video</h1><p>从头像、照片或角色图生成对口型唱歌视频，适合虚拟歌手、头像账号和品牌角色。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel">
+            <div class="panel-title"><h2>Portrait + Song</h2><span>36 credits</span></div>
+            <div class="control-grid"><div class="upload-box"><div><div class="upload-icon">☻</div><strong>Upload face image</strong><p>支持人物、插画角色和虚拟形象。</p></div></div><div class="upload-box"><div><div class="upload-icon">♪</div><strong>Select song</strong><p>选择项目歌曲或上传音频。</p></div></div></div>
+            <div class="control-field"><label>Performance Direction</label><textarea class="control-input counted" maxlength="800" placeholder="Smile gently, close-up camera, energetic chorus..."></textarea></div>
+            <div class="result-zone" id="singingResult"><div class="outputs"><div class="output-card"><div class="output-visual video">Lip Sync</div><h3>Singing Video</h3><p>口型匹配、面部表情和歌曲节奏对齐。</p></div><div class="output-card"><div class="output-visual photo">Avatar</div><h3>Avatar Snapshot</h3><p>生成首帧和封面图。</p></div></div></div>
+          </div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Performance</h3><div class="ratio-options"><button class="option-chip active">9:16</button><button class="option-chip">1:1</button><button class="option-chip">16:9</button></div><div class="control-grid"><div class="control-field"><label>Expression</label><select><option>Natural</option><option>Happy</option><option>Dramatic</option></select></div><div class="control-field"><label>Camera</label><select><option>Close-up</option><option>Half body</option></select></div></div></div><div class="quote-box"><span>Estimated cost</span><div class="big">36</div><button class="primary-btn run-btn" data-cost="36" data-target="singingResult">Generate Singing Video</button></div></aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-create-photo">
+        <div class="tool-hero"><h1>AI Image Generator</h1><p>生成封面、角色图、视频首帧和社媒宣传图，补足从歌曲到发布素材的闭环。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel">
+            <div class="panel-title"><h2>Create Photo</h2><span>6 credits</span></div>
+            <div class="control-field"><label>Prompt</label><textarea class="control-input counted" maxlength="1200" placeholder="Album cover for a neon pop song, reflective city, bold typography..."></textarea></div>
+            <div class="control-grid"><div class="upload-box"><div><div class="upload-icon">◎</div><strong>Reference Image</strong><p>可选，上传角色或品牌图。</p></div></div><div class="upload-box"><div><div class="upload-icon">Aa</div><strong>Text Layer</strong><p>输入标题，用于封面排版预览。</p></div></div></div>
+            <div class="result-zone" id="photoResult"><div class="outputs"><div class="output-card"><div class="output-visual photo"></div><h3>Cover Option A</h3><p>1:1 专辑封面，可直接绑定歌曲项目。</p></div><div class="output-card"><div class="output-visual photo"></div><h3>Vertical Poster</h3><p>4:5 社媒宣传图。</p></div></div></div>
+          </div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Image Settings</h3><div class="ratio-options"><button class="option-chip active">1:1</button><button class="option-chip">4:5</button><button class="option-chip">16:9</button></div><div class="control-field"><label>Model</label><select><option>Nano Banana Pro</option><option>Seedream V4</option><option>Album Cover v1</option></select></div></div><div class="quote-box"><span>Estimated cost</span><div class="big">6</div><button class="primary-btn run-btn" data-cost="6" data-target="photoResult">Generate Image</button></div></aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-dancing-video">
+        <div class="tool-hero"><h1>AI Dancing Video</h1><p>上传人物或角色图，选择舞蹈风格，让视频与歌曲节拍同步。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel"><div class="panel-title"><h2>Dance Setup</h2><span>52 credits</span></div><div class="control-grid"><div class="upload-box"><div><div class="upload-icon">☻</div><strong>Upload dancer image</strong><p>全身照效果最佳。</p></div></div><div class="upload-box"><div><div class="upload-icon">♫</div><strong>Upload music</strong><p>自动识别 BPM 和重拍。</p></div></div></div><div class="control-field"><label>Dance Prompt</label><textarea class="control-input counted" maxlength="800" placeholder="K-pop inspired dance, energetic chorus, clean studio lighting..."></textarea></div><div class="result-zone" id="danceResult"><div class="outputs"><div class="output-card"><div class="output-visual video">Dance</div><h3>Dance Video</h3><p>720p 竖版舞蹈片段。</p></div><div class="output-card"><div class="output-visual stem">Beat Map</div><h3>Beat Sync Map</h3><p>自动对齐节拍点。</p></div></div></div></div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Motion</h3><div class="template-options"><button class="option-chip active">K-pop</button><button class="option-chip">Hip-hop</button><button class="option-chip">TikTok</button></div><div class="control-grid"><div class="control-field"><label>Duration</label><select><option>10s</option><option selected>15s</option><option>30s</option></select></div><div class="control-field"><label>Quality</label><select><option>720p</option><option>1080p</option></select></div></div></div><div class="quote-box"><span>Estimated cost</span><div class="big">52</div><button class="primary-btn run-btn" data-cost="52" data-target="danceResult">Generate Dance</button></div></aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-lyrics-video">
+        <div class="tool-hero"><h1>Lyric Video Generator</h1><p>把歌曲、歌词和封面快速变成竖版歌词视频，适合 TikTok、Shorts 和 Reels。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel"><div class="panel-title"><h2>Lyrics + Audio</h2><span>18 credits</span></div><div class="upload-box"><div><div class="upload-icon">♪</div><strong>Select SongPilot song or upload audio</strong><p>会自动读取歌词和节拍，也可手动粘贴歌词。</p></div></div><div class="control-field"><label>Lyrics</label><textarea class="control-input counted" maxlength="2000" placeholder="Paste lyrics for synchronized subtitles..."></textarea></div><div class="result-zone" id="lyricsVideoResult"><div class="outputs"><div class="output-card"><div class="output-visual video">Lyrics</div><h3>Vertical Lyric Video</h3><p>同步字幕、动态波形、封面背景。</p></div><div class="output-card"><div class="output-visual photo">Cover</div><h3>Cover Background</h3><p>自动生成可替换背景图。</p></div></div></div></div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Subtitle Style</h3><div class="template-options"><button class="option-chip active">Minimal</button><button class="option-chip">Waveform</button><button class="option-chip">Album</button></div><div class="control-grid"><div class="control-field"><label>Ratio</label><select><option>9:16</option><option>1:1</option><option>16:9</option></select></div><div class="control-field"><label>Font</label><select><option>Bold Sans</option><option>Serif</option><option>Mono</option></select></div></div></div><div class="quote-box"><span>Estimated cost</span><div class="big">18</div><button class="primary-btn run-btn" data-cost="18" data-target="lyricsVideoResult">Generate Lyric Video</button></div></aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-seedance">
+        <div class="tool-hero"><h1>Seedance 2.0</h1><p>文字、图片或音频驱动的视频生成入口，适合音乐视觉短片、产品镜头和动态封面。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel"><div class="panel-title"><h2>Text / Image to Video</h2><span>50 credits</span></div><div class="control-field"><label>Prompt</label><textarea class="control-input counted" maxlength="1500" placeholder="A cinematic neon city scene, camera slowly pushes in, music visualizer particles..."></textarea></div><div class="control-grid"><div class="upload-box"><div><div class="upload-icon">▧</div><strong>Reference Image</strong><p>可选，用作首帧或风格参考。</p></div></div><div class="upload-box"><div><div class="upload-icon">♪</div><strong>Optional Audio</strong><p>用于节奏和镜头强度。</p></div></div></div><div class="result-zone" id="seedanceResult"><div class="outputs"><div class="output-card"><div class="output-visual video">Seedance</div><h3>Motion Video</h3><p>生成 5 秒动态视觉，可扩展为音乐视频。</p></div><div class="output-card"><div class="output-visual">Storyboard</div><h3>Storyboard</h3><p>保留镜头提示，方便继续编辑。</p></div></div></div></div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Render</h3><div class="ratio-options"><button class="option-chip active">9:16</button><button class="option-chip">16:9</button><button class="option-chip">1:1</button></div><div class="control-grid"><div class="control-field"><label>Length</label><select><option>5s</option><option>10s</option></select></div><div class="control-field"><label>Motion</label><select><option>Natural</option><option>Dynamic</option><option>Extreme</option></select></div></div></div><div class="quote-box"><span>Estimated cost</span><div class="big">50</div><button class="primary-btn run-btn" data-cost="50" data-target="seedanceResult">Generate Seedance</button></div></aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-stem-splitter">
+        <div class="tool-hero"><h1>Stem Splitter</h1><p>上传音频并分离 vocals、drums、bass、other，让创作者能继续混音、翻唱和剪辑。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel"><div class="panel-title"><h2>Upload Music</h2><span>10 credits</span></div><div class="upload-box"><div><div class="upload-icon">↥</div><strong>Drop MP3/WAV here</strong><p>最大 100MB，处理完成后可下载所有 stems。</p></div></div><div class="result-zone" id="stemResult"><div class="outputs"><div class="output-card"><div class="output-visual stem">Vocals</div><h3>Vocals</h3><p>独立人声轨道。</p></div><div class="output-card"><div class="output-visual stem">Drums / Bass</div><h3>Instrument Stems</h3><p>鼓、贝斯和其他乐器。</p></div></div></div></div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Split Mode</h3><div class="template-options"><button class="option-chip active">4 Stems</button><button class="option-chip">2 Stems</button><button class="option-chip">Pro</button></div><div class="control-field"><label>Output</label><select><option>WAV</option><option>MP3</option></select></div></div><div class="quote-box"><span>Estimated cost</span><div class="big">10</div><button class="primary-btn run-btn" data-cost="10" data-target="stemResult">Split Stems</button></div></aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-vocal-remover">
+        <div class="tool-hero"><h1>Vocal Remover</h1><p>从歌曲里移除人声，得到伴奏和清唱轨，适合翻唱、Karaoke 和二创。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel"><div class="panel-title"><h2>Remove Vocals</h2><span>8 credits</span></div><div class="upload-box"><div><div class="upload-icon">♪</div><strong>Upload song</strong><p>自动输出 Instrumental 和 Acapella 两个文件。</p></div></div><div class="result-zone" id="vocalResult"><div class="outputs"><div class="output-card"><div class="output-visual stem">Instrumental</div><h3>Instrumental</h3><p>去人声伴奏。</p></div><div class="output-card"><div class="output-visual stem">Acapella</div><h3>Acapella</h3><p>独立清唱轨。</p></div></div></div></div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Enhance</h3><div class="ratio-options"><button class="option-chip active">Clean</button><button class="option-chip">Fast</button><button class="option-chip">Pro</button></div><div class="control-field"><label>Noise reduction</label><select><option>Medium</option><option>High</option><option>Off</option></select></div></div><div class="quote-box"><span>Estimated cost</span><div class="big">8</div><button class="primary-btn run-btn" data-cost="8" data-target="vocalResult">Remove Vocals</button></div></aside>
+        </div></div></div>
+      </section>
+
+      <section class="view" id="view-music-prompt">
+        <div class="tool-hero"><h1>Music Prompt Guide</h1><p>把 MakeSong 的 Prompt 页面升级成可交互的 Prompt Builder，帮助用户写出更稳定的音乐生成提示词。</p></div>
+        <div class="tool-wrap"><div class="tool-card"><div class="tool-inner tool-grid">
+          <div class="input-panel"><div class="panel-title"><h2>Prompt Builder</h2><span>Free</span></div><div class="control-grid"><div class="control-field"><label>Scene</label><input class="control-input" id="promptScene" placeholder="Product launch video"></div><div class="control-field"><label>Genre</label><input class="control-input" id="promptGenre" placeholder="Pop electronic"></div><div class="control-field"><label>Mood</label><input class="control-input" id="promptMood" placeholder="confident, bright"></div><div class="control-field"><label>Voice</label><input class="control-input" id="promptVoice" placeholder="female vocal"></div></div><div class="control-field"><label>Generated Prompt</label><textarea class="control-input" id="builtPrompt" placeholder="Click build prompt to compose a music prompt..."></textarea></div><button class="primary-btn" id="buildPrompt">Build Prompt</button></div>
+          <aside class="settings-panel"><div class="setting-card"><h3>Prompt Formula</h3><ul class="license-list"><li><span class="check">✓</span><span>场景：给音乐一个发布目的。</span></li><li><span class="check">✓</span><span>风格：避免只写单个流派。</span></li><li><span class="check">✓</span><span>结构：说明 verse / chorus / hook。</span></li><li><span class="check">✓</span><span>限制：避免真实艺人和版权歌曲。</span></li></ul></div><div class="quote-box"><span>Best practice</span><div class="big">4</div><div class="quote-line"><span>Elements</span><strong>Scene + Style + Mood + Use</strong></div></div></aside>
+        </div></div></div>
+        <div class="section-head"><div><h2>Prompt Examples</h2><p>可直接复制到 Create Song 页面。</p></div></div>
+        <div class="sample-grid"><article class="sample-card"><div class="sample-body"><h3>Short Video Hook</h3><p>Energetic pop song for a 30s product reveal, bright female vocal, catchy chorus.</p></div></article><article class="sample-card"><div class="sample-body"><h3>Game Loop</h3><p>Seamless lo-fi synth loop for cozy game menu, warm pads, 80 BPM.</p></div></article><article class="sample-card"><div class="sample-body"><h3>Podcast Intro</h3><p>Confident intro jingle with soft drums, clean bass and memorable sonic logo.</p></div></article></div>
+      </section>
+
+      <section class="view" id="view-pricing">
+        <div class="tool-hero"><h1>Pricing</h1><p>借鉴 MakeSong 的 credits 体系，但把每档可生成次数、失败返还和取消规则写清楚。</p></div>
+        <div class="pricing-grid">
+          <article class="plan-card"><h3>Free</h3><div class="price">$0 <small>/ trial</small></div><p>适合初次试用。</p><ul><li><span class="check">✓</span><span>30 one-time credits</span></li><li><span class="check">✓</span><span>公开生成</span></li><li><span class="check">✓</span><span>低速队列</span></li></ul><button class="small-btn" data-toast="已选择 Free 试用。">Start Free</button></article>
+          <article class="plan-card featured"><h3>Creator</h3><div class="price">$12 <small>/ month</small></div><p>短视频创作者推荐。</p><ul><li><span class="check">✓</span><span>600 credits / month</span></li><li><span class="check">✓</span><span>商用授权</span></li><li><span class="check">✓</span><span>私密生成</span></li></ul><button class="primary-btn" data-toast="Creator 套餐已加入结账流程。">Choose Creator</button></article>
+          <article class="plan-card"><h3>Studio</h3><div class="price">$29 <small>/ month</small></div><p>独立音乐人和视频团队。</p><ul><li><span class="check">✓</span><span>1800 credits / month</span></li><li><span class="check">✓</span><span>WAV、分轨、歌词视频</span></li><li><span class="check">✓</span><span>优先队列</span></li></ul><button class="small-btn" data-toast="Studio 套餐已加入结账流程。">Choose Studio</button></article>
+          <article class="plan-card"><h3>Team</h3><div class="price">$79 <small>/ month</small></div><p>内容团队、广告和 API。</p><ul><li><span class="check">✓</span><span>6000 credits / month</span></li><li><span class="check">✓</span><span>团队空间</span></li><li><span class="check">✓</span><span>API 和发票</span></li></ul><button class="small-btn" data-page-jump="contact">Contact Sales</button></article>
+        </div>
+        <div class="faq-grid"><article class="faq-card"><h3>失败会扣 credits 吗？</h3><p>系统失败、渲染超时、内容安全拒绝均自动返还。</p></article><article class="faq-card"><h3>能取消订阅吗？</h3><p>账户页保留一键取消，取消后当前周期权益继续可用。</p></article><article class="faq-card"><h3>商用怎么证明？</h3><p>每个付费生成资产都会生成 License Card。</p></article></div>
+      </section>
+
+      <section class="view" id="view-contact">
+        <div class="tool-hero"><h1>Contact</h1><p>客服、版权申诉、企业合作和 API 接入入口，避免 MakeSong 评论里常见的“找不到客服”问题。</p></div>
+        <div class="contact-grid">
+          <article class="content-card"><h3>Send Message</h3><p>填写问题类型和任务 ID，系统会自动带上 credits 与生成记录。</p><form><input class="control-input" placeholder="Email"><select class="control-input"><option>Billing / Credits</option><option>License</option><option>API / Team</option><option>Bug Report</option></select><textarea class="control-input" placeholder="Describe your issue"></textarea><button class="primary-btn" type="button" data-toast="工单已创建，预计 24 小时内回复。">Submit Ticket</button></form></article>
+          <article class="content-card"><h3>Support SLA</h3><ul class="license-list"><li><span class="check">✓</span><span>Creator / Studio：24 小时内首次响应。</span></li><li><span class="check">✓</span><span>Team：8 小时内首次响应。</span></li><li><span class="check">✓</span><span>credits 争议可在明细里一键申诉。</span></li><li><span class="check">✓</span><span>授权问题可直接下载 License Card。</span></li></ul></article>
+        </div>
       </section>
     </main>
   </div>
@@ -1594,42 +2230,15 @@
   <script>
     const state = {
       balance: 343,
-      cost: 3,
-      module: "song",
-      mode: "Lyric to Music",
-      generating: false
+      running: false
     };
 
-    const mainInput = document.getElementById("mainInput");
-    const styleInput = document.getElementById("styleInput");
-    const titleInput = document.getElementById("titleInput");
-    const mainCount = document.getElementById("mainCount");
-    const styleCount = document.getElementById("styleCount");
-    const titleCount = document.getElementById("titleCount");
-    const costText = document.getElementById("costText");
-    const costTextSmall = document.getElementById("costTextSmall");
-    const balanceText = document.getElementById("balanceText");
-    const sideCredits = document.getElementById("sideCredits");
-    const progressWrap = document.getElementById("progressWrap");
-    const progressLabel = document.getElementById("progressLabel");
-    const progressValue = document.getElementById("progressValue");
-    const progressBar = document.getElementById("progressBar");
-    const resultPanel = document.getElementById("resultPanel");
+    const pageAliases = {
+      "image-gen": "create-photo"
+    };
+
     const toast = document.getElementById("toast");
-
-    function updateCounters() {
-      mainCount.textContent = mainInput.value.length;
-      styleCount.textContent = styleInput.value.length;
-      titleCount.textContent = titleInput.value.length;
-    }
-
-    function updateCost(cost) {
-      state.cost = Number(cost);
-      costText.textContent = state.cost;
-      costTextSmall.textContent = state.cost;
-      balanceText.textContent = state.balance;
-      sideCredits.textContent = state.balance;
-    }
+    const sideCredits = document.getElementById("sideCredits");
 
     function showToast(message) {
       toast.textContent = message;
@@ -1638,43 +2247,169 @@
       showToast.timer = window.setTimeout(() => toast.classList.remove("active"), 2600);
     }
 
-    document.querySelectorAll(".module-tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".module-tab").forEach(item => item.classList.remove("active"));
-        tab.classList.add("active");
-        state.module = tab.dataset.module;
-        mainInput.placeholder = tab.dataset.placeholder;
-        updateCost(tab.dataset.cost);
-        const label = tab.textContent.replace("NEW", "").trim();
-        document.getElementById("generateBtn").textContent = state.module === "song" ? "Generate Music" : `Generate ${label}`;
-        showToast(`已切换到 ${label}，本次预计 ${state.cost} credits。`);
+    function updateBalance() {
+      sideCredits.textContent = state.balance;
+      document.querySelectorAll(".balanceText").forEach(item => {
+        item.textContent = state.balance;
       });
+    }
+
+    function switchPage(page) {
+      const target = pageAliases[page] || page;
+      const view = document.getElementById(`view-${target}`);
+      if (!view) return;
+
+      document.querySelectorAll(".view").forEach(item => item.classList.remove("active"));
+      view.classList.add("active");
+
+      document.querySelectorAll("[data-page]").forEach(item => {
+        item.classList.toggle("active", item.dataset.page === target);
+      });
+      document.querySelectorAll("[data-page-jump]").forEach(item => {
+        item.classList.toggle("active", item.dataset.pageJump === target);
+      });
+
+      document.getElementById("sidebar").classList.remove("open");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function updateCounter(textarea) {
+      const wrap = textarea.closest(".field-block, .control-field");
+      let counter = wrap && wrap.querySelector(".counter span");
+      if (!counter && textarea.nextElementSibling && textarea.nextElementSibling.classList.contains("counter")) {
+        counter = textarea.nextElementSibling.querySelector("span");
+      }
+      if (counter) counter.textContent = textarea.value.length;
+    }
+
+    function runTask(button) {
+      if (state.running) return;
+      const cost = Number(button.dataset.cost || 0);
+      const targetId = button.dataset.target;
+      const result = document.getElementById(targetId);
+      const progress = document.querySelector(`[data-progress-for="${targetId}"]`) || createInlineProgress(button, targetId);
+
+      if (cost > state.balance) {
+        showToast("Credits 不足，请先升级或购买 credits。");
+        switchPage("pricing");
+        return;
+      }
+
+      state.running = true;
+      state.balance -= cost;
+      updateBalance();
+      if (result) result.classList.remove("active");
+      progress.classList.add("active");
+      const bar = progress.querySelector(".progress-track i");
+      const label = progress.querySelector(".progress-head span:first-child");
+      const percent = progress.querySelector(".progress-head span:last-child");
+      bar.style.width = "0%";
+      label.textContent = "任务排队中";
+      percent.textContent = "0%";
+
+      const steps = [
+        [18, "分析输入和风格"],
+        [42, "生成核心素材"],
+        [68, "渲染与质量检查"],
+        [88, "保存项目与授权链路"],
+        [100, "生成完成"]
+      ];
+      let value = 0;
+      let index = 0;
+      const timer = window.setInterval(() => {
+        const target = steps[index];
+        value += Math.max(4, Math.ceil((target[0] - value) / 2));
+        if (value >= target[0]) {
+          value = target[0];
+          label.textContent = target[1];
+          index += 1;
+        }
+        bar.style.width = `${value}%`;
+        percent.textContent = `${value}%`;
+        if (value >= 100) {
+          window.clearInterval(timer);
+          state.running = false;
+          window.setTimeout(() => {
+            progress.classList.remove("active");
+            if (result) result.classList.add("active");
+            showToast("生成完成：资产、扣费和授权记录已保存。");
+          }, 450);
+        }
+      }, 320);
+    }
+
+    function createInlineProgress(button, id) {
+      const progress = document.createElement("div");
+      progress.className = "progress-wrap";
+      progress.dataset.progressFor = id;
+      progress.innerHTML = '<div class="progress-head"><span>任务排队中</span><span>0%</span></div><div class="progress-track"><i></i></div>';
+      button.insertAdjacentElement("afterend", progress);
+      return progress;
+    }
+
+    document.querySelectorAll("[data-page], [data-page-jump]").forEach(item => {
+      item.addEventListener("click", () => {
+        switchPage(item.dataset.page || item.dataset.pageJump);
+      });
+    });
+
+    document.querySelectorAll("[data-toast]").forEach(btn => {
+      btn.addEventListener("click", () => showToast(btn.dataset.toast));
+    });
+
+    document.querySelectorAll(".run-btn").forEach(btn => {
+      btn.addEventListener("click", () => runTask(btn));
     });
 
     document.querySelectorAll(".mode-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".mode-btn").forEach(item => item.classList.remove("active"));
         btn.classList.add("active");
-        state.mode = btn.dataset.mode;
-        mainInput.placeholder = state.mode === "Prompt to Music"
+        const mainInput = document.getElementById("mainInput");
+        mainInput.placeholder = btn.dataset.mode === "Prompt to Music"
           ? "Describe your song idea: scene, mood, genre, voice and usage..."
           : "Enter lyrics or lyrics prompts here...";
       });
     });
 
-    document.querySelectorAll(".nav-item").forEach(item => {
-      item.addEventListener("click", () => {
-        document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
-        item.classList.add("active");
-        showToast(`${item.dataset.nav} 是原型导航入口，当前版本聚焦首页生成器改版。`);
-        document.getElementById("sidebar").classList.remove("open");
+    document.querySelectorAll(".option-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        const group = chip.parentElement;
+        group.querySelectorAll(".option-chip").forEach(item => item.classList.remove("active"));
+        chip.classList.add("active");
       });
     });
 
+    document.querySelectorAll(".counted").forEach(textarea => {
+      textarea.addEventListener("input", () => updateCounter(textarea));
+    });
+
+    document.getElementById("mainInput").addEventListener("input", event => {
+      document.getElementById("mainCount").textContent = event.target.value.length;
+    });
+
+    document.getElementById("styleInput").addEventListener("input", event => {
+      document.getElementById("styleCount").textContent = event.target.value.length;
+    });
+
+    document.getElementById("titleInput").addEventListener("input", event => {
+      document.getElementById("titleCount").textContent = event.target.value.length;
+    });
+
     document.getElementById("generateLyrics").addEventListener("click", () => {
+      const mainInput = document.getElementById("mainInput");
       mainInput.value = "[Verse]\n灯光穿过夜色，我们按下新的开始\n让灵感变成旋律，把复杂都交给节拍\n\n[Chorus]\nTurn it up, we launch tonight\nEvery dream becomes a sound";
-      updateCounters();
+      document.getElementById("mainCount").textContent = mainInput.value.length;
       showToast("已生成一段可继续编辑的歌词。");
+    });
+
+    document.querySelectorAll(".fill-demo").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const textarea = btn.closest(".input-panel").querySelector("textarea");
+        textarea.value = "A confident pop electronic song for a product launch video, bright hook, female vocal, 90 seconds, energetic but polished.";
+        updateCounter(textarea);
+        showToast("已填入示例 prompt。");
+      });
     });
 
     document.getElementById("instrumentalToggle").addEventListener("click", event => {
@@ -1688,59 +2423,13 @@
       document.getElementById("moreArrow").textContent = panel.classList.contains("open") ? "⌃" : "⌄";
     });
 
-    document.querySelectorAll("[data-toast]").forEach(btn => {
-      btn.addEventListener("click", () => showToast(btn.dataset.toast));
-    });
-
-    [mainInput, styleInput, titleInput].forEach(input => input.addEventListener("input", updateCounters));
-
-    document.getElementById("generateBtn").addEventListener("click", () => {
-      if (state.generating) return;
-      if (state.balance < state.cost) {
-        showToast("Credits 不足，请先升级或购买 credits。");
-        return;
-      }
-
-      state.generating = true;
-      state.balance -= state.cost;
-      updateCost(state.cost);
-      resultPanel.classList.remove("active");
-      progressWrap.classList.add("active");
-      progressBar.style.width = "0%";
-      progressValue.textContent = "0%";
-      progressLabel.textContent = "任务排队中";
-
-      const steps = [
-        [18, "分析歌词与风格"],
-        [42, "生成旋律与编曲"],
-        [68, "渲染人声与混音"],
-        [88, "保存项目与授权链路"],
-        [100, "生成完成"]
-      ];
-      let progress = 0;
-      let index = 0;
-      const timer = window.setInterval(() => {
-        const target = steps[index];
-        progress += Math.max(4, Math.ceil((target[0] - progress) / 2));
-        if (progress >= target[0]) {
-          progress = target[0];
-          progressLabel.textContent = target[1];
-          index += 1;
-        }
-        progressBar.style.width = `${progress}%`;
-        progressValue.textContent = `${progress}%`;
-        if (progress >= 100) {
-          window.clearInterval(timer);
-          state.generating = false;
-          window.setTimeout(() => {
-            progressWrap.classList.remove("active");
-            resultPanel.classList.add("active");
-            const title = titleInput.value.trim() || "Midnight Launch";
-            document.getElementById("songTitleA").textContent = `${title} A`;
-            showToast("生成完成：歌曲、扣费和授权记录已保存。");
-          }, 500);
-        }
-      }, 360);
+    document.getElementById("buildPrompt").addEventListener("click", () => {
+      const scene = document.getElementById("promptScene").value || "short video";
+      const genre = document.getElementById("promptGenre").value || "pop electronic";
+      const mood = document.getElementById("promptMood").value || "bright and confident";
+      const voice = document.getElementById("promptVoice").value || "female vocal";
+      document.getElementById("builtPrompt").value = `Create a ${genre} song for ${scene}. Mood: ${mood}. Voice: ${voice}. Include a memorable chorus hook, clean intro, and a strong ending for social video publishing.`;
+      showToast("Prompt 已生成，可复制到 Create Song。");
     });
 
     document.getElementById("mobileMenu").addEventListener("click", () => {
@@ -1753,8 +2442,7 @@
       }
     });
 
-    updateCounters();
-    updateCost(state.cost);
+    updateBalance();
   </script>
 </body>
 </html>
