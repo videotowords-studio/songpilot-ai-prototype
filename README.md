@@ -13,5 +13,6 @@ AI 音乐生成网站的可视化交互原型。
 - 模拟生成进度
 - MakeSong 风格的暗色网格界面
 - 左侧工具导航与顶部胶囊导航
-- 歌曲、音乐视频、唱歌视频、歌词视频、AI Dance 等功能切换
+- Home、Create Song、Music Video、Singing Video、Create Photo、AI Dancing Video、Lyrics Video、Seedance 2.0
+- Stem Splitter、Vocal Remover、Music Prompt、Pricing、Contact
 - 授权与失败返还提示
